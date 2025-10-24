@@ -10,12 +10,17 @@ The API docs can be viewed at this [URL](https://api.usaspending.gov/docs/).
 uv run server.py
 ```
 
+## Running from PyPi
+```sh
+uvx --from usaspending-mcp-server@latest usaspending-mcp-server
+```
+
 ## Using with Claude Desktop
 Update your claude_desktop_config.json with the following configuration.
 ```json
 {
   "mcpServers": {
-    "usa-spending": {
+    "usaspending": {
       "command": "npx",
       "args": [
         "mcp-remote",
@@ -31,7 +36,7 @@ Update the mcp.json file with the following configuration.
 ```json
 {
   "mcpServers": {
-    "usa-spending": {
+    "usaspending": {
       "url": "http://localhost:8000/mcp"
     }
   }
@@ -72,4 +77,4 @@ For example, if you are creating a tool for the [v2/disaster/spending_by_geograp
 Should there be any objections to this please explain why in the PR as it is not bullet proof!
 
 ## License
-USA Spending MCP Server is licensed under [GNU AGPLv3](https://github.com/thsmale/usa-spending-mcp-server/blob/main/LICENSE).
+USA Spending MCP Server is licensed under [GNU AGPLv3](https://github.com/thsmale/usaspending-mcp-server/blob/main/LICENSE).

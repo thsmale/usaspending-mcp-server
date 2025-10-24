@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 
 from agents import Agent, Runner, gen_trace_id, trace
 from agents.mcp import MCPServer, MCPServerStreamableHttp
-from agents.model_settings import ModelSettings
 
 
 async def run(mcp_server: MCPServer):
@@ -16,7 +15,6 @@ async def run(mcp_server: MCPServer):
         name="Assistant",
         instructions=f"You are a helpful assistant. The date today is {datetime.today().strftime('%Y-%m-%d')}",
         mcp_servers=[mcp_server],
-        model_settings=ModelSettings(tool_choice="required"),
     )
 
     while True:
