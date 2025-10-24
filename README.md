@@ -15,6 +15,12 @@ uv run server.py
 uvx --from usaspending-mcp-server@latest usaspending-mcp-server
 ```
 
+## Running from Docker
+```sh
+docker build -t usaspending-mcp-server .
+docker run -p 8000:8000 usaspending-mcp-server
+```
+
 ## Using with Claude Desktop
 Update your claude_desktop_config.json with the following configuration.
 ```json
@@ -41,6 +47,13 @@ Update the mcp.json file with the following configuration.
     }
   }
 }
+```
+
+## Configuration Options
+The following env or .env variables are accepted to customize what host and port the MCP server runs on.
+```
+MCP_SERVER_HOST
+MCP_SERVER_PORT
 ```
 
 ## Tools

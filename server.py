@@ -2,6 +2,7 @@ import contextlib
 import logging
 from collections.abc import AsyncIterator
 from typing import Any
+import os
 
 import mcp.types as types
 from mcp.server.lowlevel import Server
@@ -10,6 +11,8 @@ from starlette.applications import Starlette
 from starlette.middleware.cors import CORSMiddleware
 from starlette.routing import Mount
 from starlette.types import Receive, Scope, Send
+
+from dotenv import load_dotenv
 
 # Tools
 from tools.v2.budget_functions.list_budget_functions import (
@@ -49,7 +52,10 @@ from tools.v2.subawards import (
     tool_subawards,
 )
 
+load_dotenv()
 logger = logging.getLogger(__name__)
+HOST = os.getenv("MCP_SERVER_HOST", "127.0.0.1")
+PORT = int(os.getenv("MCP_SERVER_PORT", "8000"))
 
 
 def main() -> int:
@@ -149,7 +155,7 @@ def main() -> int:
 
     import uvicorn
 
-    uvicorn.run(starlette_app, host="127.0.0.1", port=8000)
+    uvicorn.run(starlette_app, host=HOST, port=PORT)
 
     return 0
 
