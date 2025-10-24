@@ -90,4 +90,4 @@ For example, if you are creating a tool for the [v2/disaster/spending_by_geograp
 Should there be any objections to this please explain why in the PR as it is not bullet proof!
 
 ## License
-USA Spending MCP Server is licensed under [GNU AGPLv3](https://github.com/thsmale/usaspending-mcp-server/blob/main/LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/thsmale/usaspending-mcp-server/blob/main/LICENSE) file for details.
