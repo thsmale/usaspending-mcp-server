@@ -14,28 +14,26 @@ tool_awards_count_federal_accounts = Tool(
         "type": "object",
         "required": ["award_id"],
         "properties": {
-            'award_id': {
-                'type': 'string',
-                'description': 'The name of the award'
-            },
+            "award_id": {"type": "string", "description": "The name of the award"},
         },
-    }
+    },
 )
 
 response_schema = {
     "type": "object",
     "properties": {
-        "federal_accounts": { 
+        "federal_accounts": {
             "type": "number",
         }
-    }
+    },
 }
 
-def call_tool_awards_count_federal_accounts(arguments: dict[str, Any]):
-    award_id = arguments.get('award_id')
-    if not award_id:
-        raise McpError(ErrorData(code=INVALID_PARAMS, message='award_id is required'))
 
-    endpoint = f'/api/v2/awards/count/federal_account/{award_id}/'
+def call_tool_awards_count_federal_accounts(arguments: dict[str, Any]):
+    award_id = arguments.get("award_id")
+    if not award_id:
+        raise McpError(ErrorData(code=INVALID_PARAMS, message="award_id is required"))
+
+    endpoint = f"/api/v2/awards/count/federal_account/{award_id}/"
     get_client = GetClient(endpoint=endpoint, response_schema=response_schema)
     return get_client.send()

@@ -7,8 +7,9 @@ from mcp.types import (
 )
 from jsonschema import validate
 
+
 class HttpClient:
-    api_url='https://api.usaspending.gov'
+    api_url = "https://api.usaspending.gov"
 
     def __init__(self, endpoint, payload, response_schema):
         self.endpoint = endpoint
@@ -16,14 +17,14 @@ class HttpClient:
         self.response_schema = response_schema
 
     def validate_response(self, response):
-        if self.response_schema == None:
+        if self.response_schema is None:
             return
 
         try:
             payload = response.json()
             validate(instance=payload, schema=self.response_schema)
         except Exception as e:
-            print(f'Warning the response did not contain the expected information {e}')
+            print(f"Warning the response did not contain the expected information {e}")
             pass
 
     def handle_response(self, response) -> list[TextContent]:
@@ -37,11 +38,16 @@ class HttpClient:
                 )
             ]
         else:
-            print(f"Non 2xx status code received {response.status_code} with response payload {response.text}")
-            raise McpError(ErrorData(
-                code=INTERNAL_ERROR,
-                message=f"Received unacceptable status code {response.status_code} with response payload {response.text}",
-            ))
+            print(
+                f"Non 2xx status code received {response.status_code} with response payload {response.text}"
+            )
+            raise McpError(
+                ErrorData(
+                    code=INTERNAL_ERROR,
+                    message=f"Received unacceptable status code {response.status_code} with response payload {response.text}",
+                )
+            )
+
 
 class PostClient(HttpClient):
     def __init__(self, endpoint, payload={}, response_schema=None):
@@ -51,15 +57,22 @@ class PostClient(HttpClient):
 
     def send(self):
         try:
-            print(f'Sending POST request to {self.endpoint} with request payload {self.payload}')
-            response = requests.post(f'{self.api_url}{self.endpoint}', json=self.payload)
+            print(
+                f"Sending POST request to {self.endpoint} with request payload {self.payload}"
+            )
+            response = requests.post(
+                f"{self.api_url}{self.endpoint}", json=self.payload
+            )
             return self.handle_response(response)
         except Exception as e:
             print(e)
-            raise McpError(ErrorData(
-                code=INTERNAL_ERROR,
-                message=f"The following error occurred in the MCP server {e}",
-            ))
+            raise McpError(
+                ErrorData(
+                    code=INTERNAL_ERROR,
+                    message=f"The following error occurred in the MCP server {e}",
+                )
+            )
+
 
 class GetClient(HttpClient):
     def __init__(self, endpoint, params={}, response_schema=None):
@@ -69,14 +82,16 @@ class GetClient(HttpClient):
 
     def send(self):
         try:
-            print(f'Sending GET request to {self.endpoint} with params {self.params}')
-            response = requests.get(f'{self.api_url}{self.endpoint}', params=self.params)
+            print(f"Sending GET request to {self.endpoint} with params {self.params}")
+            response = requests.get(
+                f"{self.api_url}{self.endpoint}", params=self.params
+            )
             return self.handle_response(response)
         except Exception as e:
             print(e)
-            raise McpError(ErrorData(
-                code=INTERNAL_ERROR,
-                message=f"The following error occurred in the MCP server {e}",
-            ))
-
-
+            raise McpError(
+                ErrorData(
+                    code=INTERNAL_ERROR,
+                    message=f"The following error occurred in the MCP server {e}",
+                )
+            )
