@@ -1,11 +1,17 @@
 from typing import Any
+
 from mcp.shared.exceptions import McpError
-from mcp.types import ErrorData, INVALID_PARAMS, Tool
+from mcp.types import INVALID_PARAMS, ErrorData, Tool
+
 from utils.http import PostClient
 
 tool_spending = Tool(
     name="spending",
-    description="This data can be used to drill down into specific subsets of data by level of detail. This data represents all government spending in the specified time period, grouped by the data type of your choice.",
+    description=(
+        "This data can be used to drill down into specific subsets of data by level of detail. "
+        "This data represents all government spending in the specified time period, "
+        "grouped by the data type of your choice."
+    ),
     inputSchema={
         "type": "object",
         "required": ["type", "filters"],

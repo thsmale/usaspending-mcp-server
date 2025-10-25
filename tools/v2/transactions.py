@@ -1,18 +1,27 @@
 from typing import Any
+
 from mcp.shared.exceptions import McpError
-from mcp.types import ErrorData, INVALID_PARAMS, Tool
+from mcp.types import INVALID_PARAMS, ErrorData, Tool
+
 from utils.http import PostClient
 
 tool_transactions = Tool(
     name="transactions",
-    description="This returns a list of transactions, their amount, type, action date, action type, modification number, and description",
+    description=(
+        "This returns a list of transactions, their amount, type, action date, action type, "
+        "modification number, and description"
+    ),
     inputSchema={
         "type": "object",
         "required": ["award_id"],
         "properties": {
             "award_id": {
                 "type": "string",
-                "description": "Either a generated natural id or a database surrogate award id. Generated award identifiers are preferred as they are effectively permanent. Surrogate award ids are retained for backward compatibility but are deprecated",
+                "description": (
+                    "Either a generated natural id or a database surrogate award id. "
+                    "Generated award identifiers are preferred as they are effectively permanent. "
+                    "Surrogate award ids are retained for backward compatibility but are deprecated"
+                ),
             },
             "limit": {"type": "number", "min": 1, "max": 5000},
             "page": {"type": "number", "default": 1},
@@ -65,17 +74,26 @@ response_schema = {
                     "description": {"type": ["string", "null"]},
                     "face_value_loan_guarantee": {
                         "type": ["number", "null"],
-                        "description": "Face value of the loan. Null for results with award type codes that do not correspond to loans",
+                        "description": (
+                            "Face value of the loan. "
+                            "Null for results with award type codes that do not correspond to loans"
+                        ),
                     },
                     "federal_action_obligation": {
                         "type": ["number", "null"],
-                        "description": "Monetary value of the transaction. Null for results with award type codes that correspond to loans.",
+                        "description": (
+                            "Monetary value of the transaction. "
+                            "Null for results with award type codes that correspond to loans."
+                        ),
                     },
                     "id": {"type": "string"},
                     "modification_number": {"type": "number"},
                     "original_loan_subsidy_cost": {
                         "type": ["number", "null"],
-                        "description": "Original subsidy cost of the loan. Null for results with award type codes that do not correspond to loans.",
+                        "description": (
+                            "Original subsidy cost of the loan. "
+                            "Null for results with award type codes that don't correspond to loans."
+                        ),
                     },
                     "type": {"type": "string"},
                     "type_description": {"type": ["string", "null"]},

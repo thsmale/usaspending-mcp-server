@@ -1,11 +1,16 @@
 from typing import Any
+
 from mcp.shared.exceptions import McpError
-from mcp.types import ErrorData, INVALID_PARAMS, Tool
+from mcp.types import INVALID_PARAMS, ErrorData, Tool
+
 from utils.http import GetClient
 
 tool_major_object_class = Tool(
     name="major_object_class",
-    description="This data can be used to better understand the different ways that a specific agency spends money",
+    description=(
+        "This data can be used to better understand the different ways "
+        "that a specific agency spends money"
+    ),
     inputSchema={
         "type": "object",
         "required": ["fiscal_year", "funding_agency_id"],
@@ -16,7 +21,10 @@ tool_major_object_class = Tool(
             },
             "funding_agency_id": {
                 "type": "number",
-                "description": "The unique USAspending.gov agency identifier. This ID is the agency_id value returned in the /api/v2/references/toptier_agencies endpoint",
+                "description": (
+                    "The unique USAspending.gov agency identifier. "
+                    "This ID is the agency_id value returned in the toptier_agencies tool"
+                ),
             },
         },
     },

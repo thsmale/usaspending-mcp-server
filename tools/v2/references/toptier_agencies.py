@@ -1,10 +1,15 @@
 from typing import Any
+
 from mcp.types import Tool
+
 from utils.http import GetClient
 
 tool_toptier_agencies = Tool(
     name="toptier_agencies",
-    description="This data can be used to better understand the different ways that a specific agency spends money",
+    description=(
+        "This data can be used to better understand the different ways "
+        "that a specific agency spends money"
+    ),
     inputSchema={
         "type": "object",
         "required": [],
@@ -62,7 +67,11 @@ response_schema = {
                     "active_fy": {"type": "string"},
                     "agency_id": {
                         "type": "number",
-                        "description": "The unique identifier for the agency. This is used in other endpoints when requesting detailed information about this specific agency",
+                        "description": (
+                            "The unique identifier for the agency. "
+                            "This is used in other endpoints when requesting "
+                            "detailed information about this specific agency"
+                        ),
                     },
                     "agency_name": {"type": "string"},
                     "budget_authority_amount": {"type": "number"},
@@ -71,12 +80,18 @@ response_schema = {
                     "outlay_amount": {"type": "number"},
                     "percentage_of_total_budget_authority": {
                         "type": "number",
-                        "description": "This is the percentage of the agency's budget authority compared to the total budget authority",
+                        "description": (
+                            "This is the percentage of the agency's budget authority "
+                            "compared to the total budget authority"
+                        ),
                     },
                     "toptier_code": {"type": "string"},
                     "agency_slug": {
                         "type": "string",
-                        "description": "The name of the agency in lowercase with dashed to be used for profile link construction",
+                        "description": (
+                            "The name of the agency in lowercase with dashed "
+                            "to be used for profile link construction"
+                        ),
                     },
                 },
             },

@@ -1,4 +1,5 @@
 from mcp.types import Tool
+
 from utils.http import GetClient
 
 tool_list_budget_functions = Tool(

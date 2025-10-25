@@ -1,10 +1,15 @@
 from typing import Any
+
 from mcp.types import Tool
+
 from utils.http import PostClient
 
 tool_federal_accounts = Tool(
     name="federal_accounts",
-    description="This returns a list of federal accounts, their number, name, managing agency, and budgetary resources",
+    description=(
+        "This returns a list of federal accounts, their number, name, managing agency, "
+        "and budgetary resources"
+    ),
     inputSchema={
         "type": "object",
         "required": [],
@@ -33,7 +38,11 @@ tool_federal_accounts = Tool(
             },
             "keyword": {
                 "type": "string",
-                "description": "They keyword that you want to search on. Can be used to search by name, number, managing agency, and budgetary resources",
+                "description": (
+                    "They keyword that you want to search on. "
+                    "Can be used to search by name, number, managing agency, "
+                    "and budgetary resources"
+                ),
             },
         },
     },
@@ -76,11 +85,17 @@ response_schema = {
                 "properties": {
                     "account_name": {
                         "type": ["string", "null"],
-                        "description": "Name of the federal account. null when the name is not provided",
+                        "description": (
+                            "Name of the federal account. "
+                            "null when the name is not provided"
+                        ),
                     },
                     "account_number": {
                         "type": ["string", "null"],
-                        "description": "The number for the federal account. null when no account number is provided",
+                        "description": (
+                            "The number for the federal account. "
+                            "null when no account number is provided"
+                        ),
                     },
                     "account_id": {
                         "type": "number",
