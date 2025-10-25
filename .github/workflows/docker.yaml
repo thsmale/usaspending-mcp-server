@@ -13,13 +13,10 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: name/app
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/usaspending-mcp-server
         tags: |
-          # branch event
           type=ref,event=branch
-          # tag event
           type=ref,event=tag
-          # pull request event
           type=ref,event=pr
           type=sha
       
