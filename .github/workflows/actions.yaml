@@ -1,4 +1,6 @@
 name: Linter
+run-name: Linting ${{ github.ref }} from ${{ github.actor }}
+on: [push, pull_request]
 
 jobs:
   uv-example:
