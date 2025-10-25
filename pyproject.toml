@@ -59,4 +59,5 @@ exclude = [
     "test",
     ".vscode",
     "*.md",
+    ".github",
 ]
