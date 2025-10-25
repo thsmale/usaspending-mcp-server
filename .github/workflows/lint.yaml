@@ -1,5 +1,5 @@
 name: Linter
-run-name: Linting ${{ github.ref }} from ${{ github.actor }}
+run-name: Linting ${{ github.ref }}
 on: [push, pull_request]
 
 jobs:
