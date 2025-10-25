@@ -1,0 +1,28 @@
+name: Linter
+run-name: Linting ${{ github.ref }} from ${{ github.actor }}
+on: [push, pull_request]
+
+jobs:
+  uv-example:
+    name: python
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          # Install a specific version of uv.
+          version: "0.8.22"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: 'pyproject.toml'
+      
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
+      
+      - name: Run linter
+        run: uvx ruff check

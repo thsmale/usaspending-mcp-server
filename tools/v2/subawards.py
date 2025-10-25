@@ -1,6 +1,8 @@
 from typing import Any
+
 from mcp.shared.exceptions import McpError
-from mcp.types import ErrorData, INVALID_PARAMS, Tool
+from mcp.types import INVALID_PARAMS, ErrorData, Tool
+
 from utils.http import PostClient
 
 tool_subawards = Tool(
@@ -26,7 +28,11 @@ tool_subawards = Tool(
             "order": {"type": "string", "enum": ["asc", "desc"], "default": "desc"},
             "award_id": {
                 "type": "string",
-                "description": "Either a generated natural award id or a database surrogate award id. Generated award identifiers are preferred as they are effectively permanent. Surrogate award ids are retained for backward compatibility but are deprecated.",
+                "description": (
+                    "Either a generated natural award id or a database surrogate award id. "
+                    "Generated award identifiers are preferred as they are effectively permanent. "
+                    "Surrogate award ids retained for backward compatibility but are deprecated."
+                ),
             },
         },
     },

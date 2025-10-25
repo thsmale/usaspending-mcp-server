@@ -1,11 +1,15 @@
 from typing import Any
+
 from mcp.shared.exceptions import McpError
-from mcp.types import ErrorData, INVALID_PARAMS, Tool
+from mcp.types import INVALID_PARAMS, ErrorData, Tool
+
 from utils.http import GetClient
 
 tool_total_budgetary_resources = Tool(
     name="total_budgetary_resources",
-    description="This is used to provide information on the federal budgetary resources of the government",
+    description=(
+        "This is used to provide information on the federal budgetary resources of the government"
+    ),
     inputSchema={
         "type": "object",
         "required": [],

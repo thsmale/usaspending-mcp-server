@@ -1,18 +1,17 @@
 import contextlib
 import logging
+import os
 from collections.abc import AsyncIterator
 from typing import Any
-import os
 
 import mcp.types as types
+from dotenv import load_dotenv
 from mcp.server.lowlevel import Server
 from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
 from starlette.applications import Starlette
 from starlette.middleware.cors import CORSMiddleware
 from starlette.routing import Mount
 from starlette.types import Receive, Scope, Send
-
-from dotenv import load_dotenv
 
 # Tools
 from tools.v2.budget_functions.list_budget_functions import (
@@ -40,8 +39,8 @@ from tools.v2.references.total_budgetary_resources import (
     tool_total_budgetary_resources,
 )
 from tools.v2.search.spending_by_award import (
-    tool_spending_by_award,
     call_tool_spending_by_award,
+    tool_spending_by_award,
 )
 from tools.v2.spending import (
     call_tool_spending,

@@ -1,10 +1,15 @@
 from typing import Any
+
 from mcp.types import Tool
+
 from utils.http import PostClient
 
 tool_recipient = Tool(
     name="recipient",
-    description="This can be used to visualize the government spending that pertains to a specific recipient. This returns a list of recipients, their level, DUNS, UEI, and amount.",
+    description=(
+        "This can be used to visualize government spending that pertains to a specific recipient. "
+        "This returns a list of recipients, their level, DUNS, UEI, and amount."
+    ),
     inputSchema={
         "type": "object",
         "required": [],
@@ -15,7 +20,9 @@ tool_recipient = Tool(
             "page": {"type": "number"},
             "keyword": {
                 "type": "string",
-                "description": "They keyword results are filtered by. Searches on name, UEI, or DUNS",
+                "description": (
+                    "They keyword results are filtered by. Searches on name, UEI, or DUNS"
+                ),
             },
             "award_type": {
                 "type": "string",
@@ -57,20 +64,34 @@ response_schema = {
                     },
                     "duns": {
                         "type": ["string", "null"],
-                        "description": "Recipient's DUNS (Data Universal Numbering System) number. null when no DUNS is provided",
+                        "description": (
+                            "Recipient's DUNS (Data Universal Numbering System) number. "
+                            "null when no DUNS is provided"
+                        ),
                     },
                     "uei": {
                         "type": ["string", "null"],
-                        "description": "Recipient's UEI (Unique Entity Identifier). null when no UEI is provided",
+                        "description": (
+                            "Recipient's UEI (Unique Entity Identifier). "
+                            "null when no UEI is provided"
+                        ),
                     },
                     "amount": {
                         "type": "number",
-                        "description": "The aggregate monetary value of all transactions associated with this recipient for the trailing 12 months.",
+                        "description": (
+                            "The aggregate monetary value of all "
+                            "transactions associated with this recipient "
+                            "for the trailing 12 months."
+                        ),
                     },
                     "recipient_level": {
                         "type": "string",
                         "enum": ["R", "P", "C"],
-                        "description": "A letter representing the recipient level. R for neither parent nor child. P for Parent recipient, or C for child recipient",
+                        "description": (
+                            "A letter representing the recipient level. "
+                            "R for neither parent nor child. "
+                            "P for Parent recipient, or C for child recipient"
+                        ),
                     },
                 },
             },

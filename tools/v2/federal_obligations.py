@@ -1,11 +1,18 @@
 from typing import Any
+
 from mcp.shared.exceptions import McpError
-from mcp.types import ErrorData, INVALID_PARAMS, Tool
+from mcp.types import INVALID_PARAMS, ErrorData, Tool
+
 from utils.http import GetClient
 
 tool_federal_obligations = Tool(
     name="federal_obligations",
-    description="This data can be used to better understand the different ways that a specific agency spends money. This returns the amount that the specific agency has obligated to various federal accounts in a given fiscal year.",
+    description=(
+        "This data can be used to better understand "
+        "the different ways that a specific agency spends money. "
+        "This returns the amount that the specific agency "
+        "has obligated to various federal accounts in a given fiscal year."
+    ),
     inputSchema={
         "type": "object",
         "required": ["fiscal_year", "funding_agency_id"],
@@ -16,7 +23,10 @@ tool_federal_obligations = Tool(
             },
             "funding_agency_id": {
                 "type": "number",
-                "description": "The unique USAspending.gov agency identifier. This ID is the agency_id value returned in the toptier_agencies tool",
+                "description": (
+                    "The unique USAspending.gov agency identifier. "
+                    "This ID is the agency_id value returned in the toptier_agencies tool"
+                ),
             },
             "limit": {
                 "type": "number",
@@ -24,7 +34,9 @@ tool_federal_obligations = Tool(
             },
             "page": {
                 "type": "number",
-                "description": "The response page to return (the record offset is (page - 1) * limit)",
+                "description": (
+                    "The response page to return (the record offset is (page - 1) * limit)"
+                ),
             },
         },
     },
@@ -49,7 +61,11 @@ response_schema = {
                     "account_number": {"type": "string"},
                     "id": {
                         "type": "string",
-                        "description": "The USAspending.gov unique identifier for the federal account. You will need to use this ID when making API requests for details about specific federal accounts",
+                        "description": (
+                            "The USAspending.gov unique identifier for the federal account. "
+                            "You will need to use this ID when making API requests for details "
+                            "about specific federal accounts"
+                        ),
                     },
                     "obligated_amount": {"type": "string"},
                 },

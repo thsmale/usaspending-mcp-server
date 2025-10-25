@@ -3,17 +3,25 @@ import os
 import shutil
 import subprocess
 import time
-from typing import Any
 from datetime import datetime, timedelta
+from typing import Any
 
 from agents import Agent, Runner, gen_trace_id, trace
 from agents.mcp import MCPServer, MCPServerStreamableHttp
+from dotenv import load_dotenv
+
+load_dotenv()
+HOST = os.getenv("MCP_SERVER_HOST", "127.0.0.1")
+PORT = int(os.getenv("MCP_SERVER_PORT", "8000"))
 
 
 async def run(mcp_server: MCPServer):
     agent = Agent(
         name="Assistant",
-        instructions=f"You are a helpful assistant. The date today is {datetime.today().strftime('%Y-%m-%d')}",
+        instructions=(
+            "You are a helpful assistant. "
+            f"The date today is {datetime.today().strftime('%Y-%m-%d')}"
+        ),
         mcp_servers=[mcp_server],
     )
 
@@ -31,7 +39,7 @@ async def main():
     async with MCPServerStreamableHttp(
         name="USA Spending MCP Server",
         params={
-            "url": "http://localhost:8000/mcp",
+            "url": f"http://{HOST}:{PORT}/mcp",
             "timeout": timedelta(seconds=60),
         },
         client_session_timeout_seconds=60,

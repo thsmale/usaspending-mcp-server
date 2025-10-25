@@ -1,6 +1,8 @@
 from typing import Any
+
 from mcp.shared.exceptions import McpError
-from mcp.types import ErrorData, INVALID_PARAMS, Tool
+from mcp.types import INVALID_PARAMS, ErrorData, Tool
+
 from utils.http import PostClient
 
 standard_location_object = {
@@ -11,7 +13,11 @@ standard_location_object = {
         "properties": {
             "country": {
                 "type": "string",
-                "description": "A 3 character code indication the country to search within. If the country code is not USA all further parameters can be ignored. A special country code FOREIGN represents all non-US countries.",
+                "description": (
+                    "A 3 character code indication the country to search within. "
+                    "If the country code is not USA all further parameters can be ignored. "
+                    "A special country code FOREIGN represents all non-US countries."
+                ),
             },
             "state": {
                 "type": "string",
@@ -21,23 +27,43 @@ standard_location_object = {
             },
             "county": {
                 "type": "string",
-                "description": "a 3 digit FIPS code indicating the county. If county is not provided, a state must be provided as well. If county is provided a district_original value must never be provided. If county is provided, a district_current value must never be provided.",
+                "description": (
+                    "A 3 digit FIPS code indicating the county."
+                    "If county is not provided, a state must be provided as well. "
+                    "If county is provided a district_original value must never be provided. "
+                    "If county is provided, a district_current value must never be provided."
+                ),
                 "minLength": 3,
                 "maxLength": 3,
             },
             "city": {
                 "type": "string",
-                "description": "If no state is provided, this will return results for all cities in any state with the provided name.",
+                "description": (
+                    "If no state is provided, this will return results for all cities "
+                    "in any state with the provided name."
+                ),
             },
             "district_original": {
                 "type": "string",
-                "description": "A 2 character code indicating the congressional district. When provided a state must always be provided as well. When provided a county must never be provided. When provided, a country must always be USA. When provided a district_current must never be provided.",
+                "description": (
+                    "A 2 character code indicating the congressional district. "
+                    "When provided a state must always be provided as well. "
+                    "When provided a county must never be provided. "
+                    "When provided, a country must always be USA. "
+                    "When provided a district_current must never be provided."
+                ),
                 "minLength": 2,
                 "maxLength": 2,
             },
             "district_current": {
                 "type": "string",
-                "description": "A 2 character code indicating the current congressional district. When provided a state must always be provided as well. When provided a county must never be provided. When provided a country must always be USA. When provided, a district_original value must never be provided.",
+                "description": (
+                    "A 2 character code indicating the current congressional district. "
+                    "When provided a state must always be provided as well. "
+                    "When provided a county must never be provided. "
+                    "When provided a country must always be USA. "
+                    "When provided, a district_original value must never be provided."
+                ),
             },
             "zip": {
                 "type": "string",
@@ -59,11 +85,17 @@ time_period_object = {
                 "properties": {
                     "start_date": {
                         "type": "string",
-                        "description": "Search based on one or more fiscal year selections OR date range. Dates should be in the following format: YYYY-MM-DD",
+                        "description": (
+                            "Search based on one or more fiscal year selections OR date range. "
+                            "Dates should be in the following format: YYYY-MM-DD"
+                        ),
                     },
                     "end_date": {
                         "type": "string",
-                        "description": "Search based on one or more fiscal year selections OR date range. Dates should be in the following format: YYYY-MM-DD",
+                        "description": (
+                            "Search based on one or more fiscal year selections OR date range. "
+                            "Dates should be in the following format: YYYY-MM-DD"
+                        ),
                     },
                     "date_type": {
                         "type": "string",
@@ -79,11 +111,17 @@ time_period_object = {
                 "properties": {
                     "start_date": {
                         "type": "string",
-                        "description": "Search based on one or more fiscal year selections OR date range. Dates should be in the following format: YYYY-MM-DD",
+                        "description": (
+                            "Search based on one or more fiscal year selections OR date range. "
+                            "Dates should be in the following format: YYYY-MM-DD"
+                        ),
                     },
                     "end_date": {
                         "type": "string",
-                        "description": "Search based on one or more fiscal year selections OR date range. Dates should be in the following format: YYYY-MM-DD",
+                        "description": (
+                            "Search based on one or more fiscal year selections OR date range. "
+                            "Dates should be in the following format: YYYY-MM-DD"
+                        ),
                     },
                     "date_type": {
                         "type": "string",
@@ -227,13 +265,18 @@ spending_by_award_response_properties = [
 ]
 
 """
-We are going to take a different approach for this tool versus spending_by_geography
-I am going to reduce the input schema since I am worried a more complex input schema may overwhelm the all knowing AI
-Weird, initially I didn't event supply recipient_search_text but it still tried to use it in a query so I added that one since it tried using it as a string instead of an array
+We are going to take a different approach for this tool versus spending_by_geography.
+I am not adding every single filter property.
+Since I am worried a more complex input schema may overwhelm the LLM.
+Weird, initially I didn't event supply recipient_search_text.
+Regardless, the LLM still tried to use it in a query so I added it.
 """
 tool_spending_by_award = Tool(
     name="spending_by_award",
-    description="This allows for complex filtering for specific subsets of spending data. This accepts filters and fields, and returns the fields of the filtered awards.",
+    description=(
+        "This allows for complex filtering for specific subsets of spending data. "
+        "This accepts filters and fields, and returns the fields of the filtered awards."
+    ),
     inputSchema={
         "type": "object",
         "required": ["filters", "fields"],
@@ -280,7 +323,10 @@ tool_spending_by_award = Tool(
             },
             "spending_level": {
                 "type": "string",
-                "description": "Group the spending by level. This also determines what data source is used for the totals",
+                "description": (
+                    "Group the spending by level. "
+                    "This also determines what data source is used for the totals"
+                ),
                 "enum": ["awards", "subawards"],
                 "default": "awards",
             },

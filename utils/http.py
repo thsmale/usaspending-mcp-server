@@ -1,11 +1,11 @@
 import requests
+from jsonschema import validate
 from mcp.shared.exceptions import McpError
 from mcp.types import (
-    ErrorData,
     INTERNAL_ERROR,
+    ErrorData,
     TextContent,
 )
-from jsonschema import validate
 
 
 class HttpClient:
@@ -39,18 +39,22 @@ class HttpClient:
             ]
         else:
             print(
-                f"Non 2xx status code received {response.status_code} with response payload {response.text}"
+                f"Non 2xx status code received {response.status_code} "
+                f"with response payload {response.text}"
             )
             raise McpError(
                 ErrorData(
                     code=INTERNAL_ERROR,
-                    message=f"Received unacceptable status code {response.status_code} with response payload {response.text}",
+                    message=(
+                        f"Received unacceptable status code {response.status_code} "
+                        f"with response payload {response.text}"
+                    ),
                 )
             )
 
 
 class PostClient(HttpClient):
-    def __init__(self, endpoint, payload={}, response_schema=None):
+    def __init__(self, endpoint, payload=None, response_schema=None):
         self.endpoint = endpoint
         self.payload = payload
         self.response_schema = response_schema
@@ -71,11 +75,11 @@ class PostClient(HttpClient):
                     code=INTERNAL_ERROR,
                     message=f"The following error occurred in the MCP server {e}",
                 )
-            )
+            ) from e
 
 
 class GetClient(HttpClient):
-    def __init__(self, endpoint, params={}, response_schema=None):
+    def __init__(self, endpoint, params=None, response_schema=None):
         self.endpoint = endpoint
         self.params = params
         self.response_schema = response_schema
@@ -94,4 +98,4 @@ class GetClient(HttpClient):
                     code=INTERNAL_ERROR,
                     message=f"The following error occurred in the MCP server {e}",
                 )
-            )
+            ) from e
