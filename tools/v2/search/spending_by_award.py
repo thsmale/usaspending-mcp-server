@@ -1,174 +1,14 @@
+from copy import deepcopy
 from typing import Any
 
 from mcp.shared.exceptions import McpError
 from mcp.types import INVALID_PARAMS, ErrorData, Tool
 
+from tools.v2.search.config import advanced_filter_object
 from utils.http import PostClient
 
-standard_location_object = {
-    "type": "array",
-    "items": {
-        "type": "object",
-        "required": ["country"],
-        "properties": {
-            "country": {
-                "type": "string",
-                "description": (
-                    "A 3 character code indication the country to search within. "
-                    "If the country code is not USA all further parameters can be ignored. "
-                    "A special country code FOREIGN represents all non-US countries."
-                ),
-            },
-            "state": {
-                "type": "string",
-                "description": "a 2 character string abbreviation for the state or territory",
-                "minLength": 2,
-                "maxLength": 2,
-            },
-            "county": {
-                "type": "string",
-                "description": (
-                    "A 3 digit FIPS code indicating the county."
-                    "If county is not provided, a state must be provided as well. "
-                    "If county is provided a district_original value must never be provided. "
-                    "If county is provided, a district_current value must never be provided."
-                ),
-                "minLength": 3,
-                "maxLength": 3,
-            },
-            "city": {
-                "type": "string",
-                "description": (
-                    "If no state is provided, this will return results for all cities "
-                    "in any state with the provided name."
-                ),
-            },
-            "district_original": {
-                "type": "string",
-                "description": (
-                    "A 2 character code indicating the congressional district. "
-                    "When provided a state must always be provided as well. "
-                    "When provided a county must never be provided. "
-                    "When provided, a country must always be USA. "
-                    "When provided a district_current must never be provided."
-                ),
-                "minLength": 2,
-                "maxLength": 2,
-            },
-            "district_current": {
-                "type": "string",
-                "description": (
-                    "A 2 character code indicating the current congressional district. "
-                    "When provided a state must always be provided as well. "
-                    "When provided a county must never be provided. "
-                    "When provided a country must always be USA. "
-                    "When provided, a district_original value must never be provided."
-                ),
-            },
-            "zip": {
-                "type": "string",
-                "description": "A 5 digit string indicating the postal area to search within.",
-            },
-        },
-    },
-}
-
-time_period_object = {
-    "type": "array",
-    "items": {
-        "anyOf": [
-            {
-                "type": "object",
-                "title": "SubawardSearchTimePeriodObject",
-                "required": ["start_date", "end_date"],
-                "description": "Use this if spending_level is subawards or subawards is true",
-                "properties": {
-                    "start_date": {
-                        "type": "string",
-                        "description": (
-                            "Search based on one or more fiscal year selections OR date range. "
-                            "Dates should be in the following format: YYYY-MM-DD"
-                        ),
-                    },
-                    "end_date": {
-                        "type": "string",
-                        "description": (
-                            "Search based on one or more fiscal year selections OR date range. "
-                            "Dates should be in the following format: YYYY-MM-DD"
-                        ),
-                    },
-                    "date_type": {
-                        "type": "string",
-                        "enum": ["action_date", "last_modified_date"],
-                        "default": "action_date",
-                    },
-                },
-            },
-            {
-                "type": "object",
-                "title": "TransactionSearchTimePeriodObject",
-                "required": ["start_date", "end_date"],
-                "properties": {
-                    "start_date": {
-                        "type": "string",
-                        "description": (
-                            "Search based on one or more fiscal year selections OR date range. "
-                            "Dates should be in the following format: YYYY-MM-DD"
-                        ),
-                    },
-                    "end_date": {
-                        "type": "string",
-                        "description": (
-                            "Search based on one or more fiscal year selections OR date range. "
-                            "Dates should be in the following format: YYYY-MM-DD"
-                        ),
-                    },
-                    "date_type": {
-                        "type": "string",
-                        "enum": [
-                            "action_date",
-                            "date_signed",
-                            "last_modified_date",
-                            "new_awards_only",
-                        ],
-                    },
-                },
-            },
-        ]
-    },
-}
-
-filter_object_award_types = {
-    "type": "array",
-    "default": ["A", "B", "C", "D"],
-    "items": {
-        "type": "string",
-        "enum": [
-            "02",
-            "03",
-            "04",
-            "05",
-            "06",
-            "07",
-            "08",
-            "09",
-            "10",
-            "11",
-            "A",
-            "B",
-            "C",
-            "D",
-            "IDV_A",
-            "IDV_B",
-            "IDV_B_A",
-            "IDV_B_B",
-            "IDV_B_C",
-            "IDV_C",
-            "IDV_D",
-            "IDV_E",
-        ],
-    },
-}
+award_advanced_filter_object = deepcopy(advanced_filter_object)
+award_advanced_filter_object['required'] = ['award_type_codes']
 
 spending_by_award_fields_enum = [
     "Award ID",
@@ -281,23 +121,7 @@ tool_spending_by_award = Tool(
         "type": "object",
         "required": ["filters", "fields"],
         "properties": {
-            "filters": {
-                "type": "object",
-                "required": ["award_type_codes"],
-                "properties": {
-                    "time_period": time_period_object,
-                    "place_of_performance_locations": standard_location_object,
-                    "award_type_codes": filter_object_award_types,
-                    "recipient_search_text": {
-                        "type": "array",
-                        "description": "Text searched across a recipients name, UEI, and DUNS",
-                        "minItems": 1,  # Will return 422 if this is below min 1 items
-                        "items": {
-                            "type": "string",
-                        },
-                    },
-                },
-            },
+            "filters": award_advanced_filter_object,
             "fields": spending_by_award_fields,
             "limit": {
                 "type": "number",

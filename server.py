@@ -42,6 +42,10 @@ from tools.v2.search.spending_by_award import (
     call_tool_spending_by_award,
     tool_spending_by_award,
 )
+from tools.v2.search.spending_over_time import (
+    call_tool_spending_over_time,
+    tool_spending_over_time,
+)
 from tools.v2.spending import (
     call_tool_spending,
     tool_spending,
@@ -87,6 +91,9 @@ def main() -> int:
         if name == "spending_by_award":
             return call_tool_spending_by_award(arguments)
 
+        if name == 'spending_over_time':
+            return call_tool_spending_over_time(arguments)
+
         if name == "subawards":
             return call_tool_subawards(arguments)
 
@@ -107,6 +114,7 @@ def main() -> int:
             tool_recipient,
             tool_spending,
             tool_spending_by_award,
+            tool_spending_over_time,
             tool_subawards,
             tool_total_budgetary_resources,
             tool_toptier_agencies,
