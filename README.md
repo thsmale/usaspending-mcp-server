@@ -23,15 +23,15 @@ docker run -p 8000:8000 usaspending-mcp-server
 
 ## Using with Claude Desktop
 Update your claude_desktop_config.json with the following configuration.
+Ensure the MCP server is running by using one of the methods mentioned above.
 ```json
 {
   "mcpServers": {
     "usaspending": {
-      "command": "uvx",
+      "command": "npx",
       "args": [
-        "--from",
-        "usaspending-mcp-server@latest",
-        "usaspending-mcp-server"
+        "mcp-remote",
+        "http://localhost:8000/mcp"
       ]
     }
   }
