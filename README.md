@@ -27,23 +27,12 @@ Update your claude_desktop_config.json with the following configuration.
 {
   "mcpServers": {
     "usaspending": {
-      "command": "npx",
+      "command": "uvx",
       "args": [
-        "mcp-remote",
-        "http://localhost:8000/mcp"
+        "--from",
+        "usaspending-mcp-server@latest",
+        "usaspending-mcp-server"
       ]
-    }
-  }
-}
-```
-
-## Using with Cursor
-Update the mcp.json file with the following configuration.
-```json
-{
-  "mcpServers": {
-    "usaspending": {
-      "url": "http://localhost:8000/mcp"
     }
   }
 }
