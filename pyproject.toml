@@ -4,7 +4,7 @@ version = "0.1.1"
 description = "This is an MCP server to interact with the USASPENDING.gov API"
 readme = "README.md"
 requires-python = ">=3.10"
-authors = [{ name = "Thomas Smale" }]
+authors = [{ name = "Thomas Smale", email = "tom.snail.mail@gmail.com" }]
 license = "MIT"
 dependencies = [
     "anyio>=4.11.0",

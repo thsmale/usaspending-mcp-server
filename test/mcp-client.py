@@ -65,7 +65,7 @@ if __name__ == "__main__":
         this_dir = os.path.dirname(os.path.abspath(__file__))
         server_file = os.path.join(this_dir, "../server.py")
 
-        print("Starting USA Spending MCP Server at http://localhost:8000/mcp")
+        print(f"Starting USA Spending MCP Server at http://{HOST}:{PORT}/mcp")
 
         process = subprocess.Popen(["uv", "run", server_file])
         # Git it 3 seconds to start
