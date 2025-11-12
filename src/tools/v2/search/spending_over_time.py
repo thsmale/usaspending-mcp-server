@@ -104,7 +104,7 @@ response_schema = {
     }
 }
 
-def call_tool_spending_over_time(arguments: dict[str, Any]):
+async def call_tool_spending_over_time(arguments: dict[str, Any]):
     endpoint = "/api/v2/search/spending_over_time/"
     group = arguments.get("group")
     filters = arguments.get("filters")
@@ -133,5 +133,5 @@ def call_tool_spending_over_time(arguments: dict[str, Any]):
     if spending_level is not None:
         payload["spending_level"] = spending_level
 
-    post_client = PostClient(endpoint, payload, response_schema)
+    post_client = await PostClient(endpoint, payload, response_schema)
     return post_client.send()

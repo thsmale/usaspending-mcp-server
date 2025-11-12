@@ -54,7 +54,7 @@ response_schema = {
 }
 
 
-def call_tool_major_object_class(arguments: dict[str, Any]):
+async def call_tool_major_object_class(arguments: dict[str, Any]):
     fiscal_year = arguments.get("fiscal_year")
     funding_agency_id = arguments.get("funding_agency_id")
     if fiscal_year is None or funding_agency_id is None:
@@ -72,4 +72,4 @@ def call_tool_major_object_class(arguments: dict[str, Any]):
 
     endpoint = "/api/v2/financial_spending/major_object_class/"
     get_client = GetClient(endpoint, params, response_schema)
-    return get_client.send()
+    return await get_client.send()

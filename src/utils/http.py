@@ -1,4 +1,4 @@
-import requests
+from httpx import AsyncClient
 from jsonschema import validate
 from mcp.shared.exceptions import McpError
 from mcp.types import (
@@ -10,6 +10,7 @@ from mcp.types import (
 
 class HttpClient:
     api_url = "https://api.usaspending.gov"
+    client = AsyncClient()
 
     def __init__(self, endpoint, payload, response_schema):
         self.endpoint = endpoint
@@ -59,12 +60,12 @@ class PostClient(HttpClient):
         self.payload = payload
         self.response_schema = response_schema
 
-    def send(self):
+    async def send(self):
         try:
             print(
                 f"Sending POST request to {self.endpoint} with request payload {self.payload}"
             )
-            response = requests.post(
+            response = await self.client.post(
                 f"{self.api_url}{self.endpoint}", json=self.payload
             )
             return self.handle_response(response)
@@ -84,10 +85,10 @@ class GetClient(HttpClient):
         self.params = params
         self.response_schema = response_schema
 
-    def send(self):
+    async def send(self):
         try:
             print(f"Sending GET request to {self.endpoint} with params {self.params}")
-            response = requests.get(
+            response = await self.client.get(
                 f"{self.api_url}{self.endpoint}", params=self.params
             )
             return self.handle_response(response)

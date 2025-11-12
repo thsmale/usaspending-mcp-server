@@ -27,7 +27,7 @@ response_schema = {
 }
 
 
-def call_tool_list_budget_functions():
+async def call_tool_list_budget_functions():
     endpoint = "/api/v2/budget_functions/list_budget_functions/"
     get_client = GetClient(endpoint=endpoint, response_schema=response_schema)
-    return get_client.send()
+    return await get_client.send()

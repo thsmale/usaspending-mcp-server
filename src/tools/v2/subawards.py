@@ -79,7 +79,7 @@ response_schema = {
 }
 
 
-def call_tool_subawards(arguments: dict[str, Any]):
+async def call_tool_subawards(arguments: dict[str, Any]):
     endpoint = "/api/v2/subawards/"
     page = arguments.get("page")
     limit = arguments.get("limit")
@@ -124,4 +124,4 @@ def call_tool_subawards(arguments: dict[str, Any]):
         payload["award_id"] = award_id
 
     post_client = PostClient(endpoint, payload, response_schema)
-    return post_client.send()
+    return await post_client.send()

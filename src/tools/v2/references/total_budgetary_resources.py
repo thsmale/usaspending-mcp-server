@@ -54,7 +54,7 @@ response_schema = {
 }
 
 
-def call_tool_total_budgetary_resources(arguments: dict[str, Any]):
+async def call_tool_total_budgetary_resources(arguments: dict[str, Any]):
     fiscal_year = arguments.get("fiscal_year")
     fiscal_period = arguments.get("fiscal_period")
     if fiscal_period is not None and fiscal_year is None:
@@ -73,4 +73,4 @@ def call_tool_total_budgetary_resources(arguments: dict[str, Any]):
 
     endpoint = "/api/v2/references/total_budgetary_resources/"
     get_client = GetClient(endpoint, params, response_schema)
-    return get_client.send()
+    return await get_client.send()

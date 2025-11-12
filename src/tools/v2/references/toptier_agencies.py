@@ -100,7 +100,7 @@ response_schema = {
 }
 
 
-def call_tool_toptier_agencies(arguments: dict[str, Any]):
+async def call_tool_toptier_agencies(arguments: dict[str, Any]):
     sort = arguments.get("sort")
     order = arguments.get("desc")
     params = {}
@@ -111,4 +111,4 @@ def call_tool_toptier_agencies(arguments: dict[str, Any]):
 
     endpoint = "/api/v2/references/toptier_agencies/"
     get_client = GetClient(endpoint, params, response_schema)
-    return get_client.send()
+    return await get_client.send()

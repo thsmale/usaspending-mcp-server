@@ -243,7 +243,7 @@ response_schema = {
 }
 
 
-def call_tool_spending_by_award(arguments: dict[str, Any]):
+async def call_tool_spending_by_award(arguments: dict[str, Any]):
     endpoint = "/api/v2/search/spending_by_award/"
     filters = arguments.get("filters")
     fields = arguments.get("fields")
@@ -281,4 +281,4 @@ def call_tool_spending_by_award(arguments: dict[str, Any]):
         payload["spending_level"] = spending_level
 
     post_client = PostClient(endpoint, payload, response_schema)
-    return post_client.send()
+    return await post_client.send()
