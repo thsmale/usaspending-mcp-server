@@ -92,7 +92,7 @@ response_schema = {
 }
 
 
-def call_tool_spending(arguments: dict[str, Any]):
+async def call_tool_spending(arguments: dict[str, Any]):
     endpoint = "/api/v2/spending/"
     spending_type = arguments.get("type")
     filters = arguments.get("filters")
@@ -118,4 +118,4 @@ def call_tool_spending(arguments: dict[str, Any]):
     }
 
     post_client = PostClient(endpoint, payload, response_schema)
-    return post_client.send()
+    return await post_client.send()

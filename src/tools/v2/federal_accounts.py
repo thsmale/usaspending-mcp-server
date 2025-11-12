@@ -110,7 +110,7 @@ response_schema = {
 }
 
 
-def call_tool_federal_accounts(arguments: dict[str, Any]):
+async def call_tool_federal_accounts(arguments: dict[str, Any]):
     endpoint = "/api/v2/federal_accounts/"
     filters = arguments.get("filters")
     sort = arguments.get("sort")
@@ -131,4 +131,4 @@ def call_tool_federal_accounts(arguments: dict[str, Any]):
         payload["keyword"] = keyword
 
     post_client = PostClient(endpoint, payload, response_schema)
-    return post_client.send()
+    return await post_client.send()

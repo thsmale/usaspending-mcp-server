@@ -100,7 +100,7 @@ response_schema = {
 }
 
 
-def call_tool_recipient(arguments: dict[str, Any]):
+async def call_tool_recipient(arguments: dict[str, Any]):
     endpoint = "/api/v2/recipient/"
     order = arguments.get("order")
     sort = arguments.get("sort")
@@ -124,4 +124,4 @@ def call_tool_recipient(arguments: dict[str, Any]):
         payload["award_type"] = award_type
 
     post_client = PostClient(endpoint, payload, response_schema)
-    return post_client.send()
+    return await post_client.send()

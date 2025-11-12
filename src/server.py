@@ -57,34 +57,34 @@ async def call_tool(
     name: str, arguments: dict[str, Any]
 ) -> list[types.ContentBlock]:
     if name == "federal_accounts":
-        return call_tool_federal_accounts(arguments)
+        return await call_tool_federal_accounts(arguments)
 
     if name == "list_budget_functions":
-        return call_tool_list_budget_functions()
+        return await call_tool_list_budget_functions()
 
     if name == "major_object_class":
-        return call_tool_major_object_class(arguments)
+        return await call_tool_major_object_class(arguments)
 
     if name == "recipient":
-        return call_tool_recipient(arguments)
+        return await call_tool_recipient(arguments)
 
     if name == "spending":
-        return call_tool_spending(arguments)
+        return await call_tool_spending(arguments)
 
     if name == "spending_by_award":
-        return call_tool_spending_by_award(arguments)
+        return await call_tool_spending_by_award(arguments)
 
     if name == 'spending_over_time':
-        return call_tool_spending_over_time(arguments)
+        return await call_tool_spending_over_time(arguments)
 
     if name == "subawards":
-        return call_tool_subawards(arguments)
+        return await call_tool_subawards(arguments)
 
     if name == "total_budgetary_resources":
-        return call_tool_total_budgetary_resources(arguments)
+        return await call_tool_total_budgetary_resources(arguments)
 
     if name == "toptier_agencies":
-        return call_tool_toptier_agencies(arguments)
+        return await call_tool_toptier_agencies(arguments)
 
     raise ValueError(f"Unknown tool: {name}")
 
