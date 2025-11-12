@@ -63,7 +63,7 @@ if __name__ == "__main__":
     process: subprocess.Popen[Any] | None = None
     try:
         this_dir = os.path.dirname(os.path.abspath(__file__))
-        server_file = os.path.join(this_dir, "../server.py")
+        server_file = os.path.join(this_dir, "../src/server.py")
 
         print(f"Starting USA Spending MCP Server at http://{HOST}:{PORT}/mcp")
 

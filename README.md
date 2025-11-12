@@ -7,7 +7,7 @@ The API docs can be viewed at this [URL](https://api.usaspending.gov/docs/).
 
 ## Running Locally
 ```sh
-uv run server.py
+uv run src/server.py
 ```
 
 ## Running from PyPi
