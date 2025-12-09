@@ -3,7 +3,7 @@ from typing import Any
 from mcp.shared.exceptions import McpError
 from mcp.types import INVALID_PARAMS, ErrorData, Tool
 
-from utils.http import PostClient
+from utils.http import HttpClient
 
 tool_subawards = Tool(
     name="subawards",
@@ -91,7 +91,7 @@ async def call_tool_subawards(arguments: dict[str, Any]):
         raise McpError(
             ErrorData(
                 code=INVALID_PARAMS,
-                message="page is a required argument",
+                message="page must be provided.",
             )
         )
 
@@ -99,7 +99,7 @@ async def call_tool_subawards(arguments: dict[str, Any]):
         raise McpError(
             ErrorData(
                 code=INVALID_PARAMS,
-                message="sort is a required argument",
+                message="sort must be provided.",
             )
         )
 
@@ -107,7 +107,7 @@ async def call_tool_subawards(arguments: dict[str, Any]):
         raise McpError(
             ErrorData(
                 code=INVALID_PARAMS,
-                message="order is a required argument",
+                message="order must be provided.",
             )
         )
 
@@ -123,5 +123,10 @@ async def call_tool_subawards(arguments: dict[str, Any]):
     if award_id is not None:
         payload["award_id"] = award_id
 
-    post_client = PostClient(endpoint, payload, response_schema)
+    post_client = HttpClient(
+        endpoint=endpoint,
+        method="POST",
+        payload=payload,
+        response_schema=response_schema,
+    )
     return await post_client.send()

@@ -4,7 +4,7 @@ from mcp.shared.exceptions import McpError
 from mcp.types import INVALID_PARAMS, ErrorData, Tool
 
 from tools.v2.search.config import advanced_filter_object
-from utils.http import PostClient
+from utils.http import HttpClient
 
 tool_spending_over_time = Tool(
     name="spending_over_time",
@@ -35,9 +35,9 @@ tool_spending_over_time = Tool(
                     "This also determines what data source is used for the totals."
                 ),
                 "default": "transactions",
-            }
-        }
-    }
+            },
+        },
+    },
 )
 
 response_schema = {
@@ -71,38 +71,46 @@ response_schema = {
                     "Idv_Outlays",
                     "Grant_Outlays",
                     "Direct_Outlays",
-                    "Other_Outlays"
+                    "Other_Outlays",
                 ],
                 "properties": {
                     "time_period": {
                         "type": "object",
                         "properties": {
-                            "calendar_year": { "type": "string" },
-                            "fiscal_year": { "type": "string" },
-                            "quarter": { "type": "string" },
-                            "month": { "type": "string" },
-                        }
+                            "calendar_year": {"type": "string"},
+                            "fiscal_year": {"type": "string"},
+                            "quarter": {"type": "string"},
+                            "month": {"type": "string"},
+                        },
                     },
-                    "aggregated_amount": { "type": "number" },
-                    "Contract_Obligations": { "type": "number" },
-                    "Loan_Obligations": { "type": "number" },
-                    "Idv_Obligations": { "type": "number" },
-                    "Grant_Obligations": { "type": "number" },
-                    "Direct_Obligations": { "type": "number" },
-                    "Other_Obligations": { "type": "number" },
-                    "total_outlays": { "type": ["number", "null"] },
-                    "Contract_Outlays": { "type": ["number", "null"] },
-                    "Loan_Outlays": { "type": ["number", "null"] },
-                    "Idv_Outlays": { "type": ["number", "null"] },
-                    "Grant_Outlays": { "type": ["number", "null"] },
-                    "Direct_Outlays": { "type": ["number", "null"] },
-                    "Other_Outlays": { "type": ["number", "null"] },
-                }
-            }
+                    "aggregated_amount": {"type": "number"},
+                    "Contract_Obligations": {"type": "number"},
+                    "Loan_Obligations": {"type": "number"},
+                    "Idv_Obligations": {"type": "number"},
+                    "Grant_Obligations": {"type": "number"},
+                    "Direct_Obligations": {"type": "number"},
+                    "Other_Obligations": {"type": "number"},
+                    "total_outlays": {"type": ["number", "null"]},
+                    "Contract_Outlays": {"type": ["number", "null"]},
+                    "Loan_Outlays": {"type": ["number", "null"]},
+                    "Idv_Outlays": {"type": ["number", "null"]},
+                    "Grant_Outlays": {"type": ["number", "null"]},
+                    "Direct_Outlays": {"type": ["number", "null"]},
+                    "Other_Outlays": {"type": ["number", "null"]},
+                },
+            },
         },
-        "messages": { "type": "array", "items": { "type": "string" } }
-    }
+        "messages": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": (
+                "An array of warnings or instructional directives to aid consumers "
+                "of this endpoint with development and debugging."
+            ),
+        },
+    },
 }
+
 
 async def call_tool_spending_over_time(arguments: dict[str, Any]):
     endpoint = "/api/v2/search/spending_over_time/"
@@ -112,16 +120,20 @@ async def call_tool_spending_over_time(arguments: dict[str, Any]):
     spending_level = arguments.get("spending_level")
 
     if not group:
-        raise McpError(ErrorData(
-            code=INVALID_PARAMS,
-            message="groups is a required argument",
-        ))
+        raise McpError(
+            ErrorData(
+                code=INVALID_PARAMS,
+                message="group must be provided.",
+            )
+        )
 
     if not bool(filters):
-        raise McpError(ErrorData(
-            code=INVALID_PARAMS,
-            message="filters is a required argument",
-        ))
+        raise McpError(
+            ErrorData(
+                code=INVALID_PARAMS,
+                message="filters must be provided.",
+            )
+        )
 
     payload = {
         "group": group,
@@ -133,5 +145,7 @@ async def call_tool_spending_over_time(arguments: dict[str, Any]):
     if spending_level is not None:
         payload["spending_level"] = spending_level
 
-    post_client = await PostClient(endpoint, payload, response_schema)
+    post_client = await HttpClient(
+        endpoint=endpoint, payload=payload, response_schema=response_schema
+    )
     return post_client.send()

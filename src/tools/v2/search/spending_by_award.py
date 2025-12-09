@@ -5,10 +5,10 @@ from mcp.shared.exceptions import McpError
 from mcp.types import INVALID_PARAMS, ErrorData, Tool
 
 from tools.v2.search.config import advanced_filter_object
-from utils.http import PostClient
+from utils.http import HttpClient
 
 award_advanced_filter_object = deepcopy(advanced_filter_object)
-award_advanced_filter_object['required'] = ['award_type_codes']
+award_advanced_filter_object["required"] = ["award_type_codes"]
 
 spending_by_award_fields_enum = [
     "Award ID",
@@ -197,9 +197,7 @@ response_schema = {
                     "Last Date to Order": {"type": ["string", "null"]},
                     "Last Modified Date": {"type": "string"},
                     "Loan Value": {"type": ["number"]},
-                    "Period of Performance Current End Date": {
-                        "type": ["string", "null"]
-                    },
+                    "Period of Performance Current End Date": {"type": ["string", "null"]},
                     "Period of Performance Start Date": {"type": "string"},
                     "Place of Performance City Code": {"type": "number"},
                     "Place of Performance Country Code": {"type": ["string", "null"]},
@@ -238,7 +236,14 @@ response_schema = {
                 "hasNext": {"type": "boolean"},
             },
         },
-        "messages": {"type": "array", "items": {"type": "string"}},
+        "messages": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": (
+                "An array of warnings or instructional directives to aid consumers "
+                "of this endpoint with development and debugging."
+            ),
+        },
     },
 }
 
@@ -254,11 +259,18 @@ async def call_tool_spending_by_award(arguments: dict[str, Any]):
     subawards = arguments.get("subawards")
     spending_level = arguments.get("spending_level")
 
-    if not bool(filters) or fields is None:
+    if not bool(filters):
         raise McpError(
             ErrorData(
                 code=INVALID_PARAMS,
-                message="filters and fields are required arguments",
+                message="filters must be provided.",
+            )
+        )
+    if fields is None:
+        raise McpError(
+            ErrorData(
+                code=INVALID_PARAMS,
+                message="fields must be provided.",
             )
         )
 
@@ -280,5 +292,7 @@ async def call_tool_spending_by_award(arguments: dict[str, Any]):
     if spending_level is not None:
         payload["spending_level"] = spending_level
 
-    post_client = PostClient(endpoint, payload, response_schema)
+    post_client = HttpClient(
+        endpoint=endpoint, method="POST", payload=payload, response_schema=response_schema
+    )
     return await post_client.send()

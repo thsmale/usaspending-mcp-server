@@ -1,9 +1,10 @@
+from datetime import date
 from typing import Any
 
 from mcp.shared.exceptions import McpError
 from mcp.types import INVALID_PARAMS, ErrorData, Tool
 
-from utils.http import PostClient
+from utils.http import HttpClient
 
 tool_spending = Tool(
     name="spending",
@@ -33,7 +34,7 @@ tool_spending = Tool(
                 "type": "object",
                 "required": ["fy"],
                 "properties": {
-                    "fy": {"type": "string"},
+                    "fy": {"type": "string", "default": date.today().strftime("%Y")},
                     "quarter": {"type": "string", "enum": ["1", "2", "3", "4"]},
                     "period": {
                         "type": "string",
@@ -96,11 +97,12 @@ async def call_tool_spending(arguments: dict[str, Any]):
     endpoint = "/api/v2/spending/"
     spending_type = arguments.get("type")
     filters = arguments.get("filters")
+
     if spending_type is None:
         raise McpError(
             ErrorData(
                 code=INVALID_PARAMS,
-                message="type is a required argument",
+                message="type must be provided.",
             )
         )
 
@@ -108,7 +110,7 @@ async def call_tool_spending(arguments: dict[str, Any]):
         raise McpError(
             ErrorData(
                 code=INVALID_PARAMS,
-                message="filters is a required argument",
+                message="filters must be provided.",
             )
         )
 
@@ -117,5 +119,7 @@ async def call_tool_spending(arguments: dict[str, Any]):
         "filters": filters,
     }
 
-    post_client = PostClient(endpoint, payload, response_schema)
+    post_client = HttpClient(
+        endpoint=endpoint, method="POST", payload=payload, response_schema=response_schema
+    )
     return await post_client.send()

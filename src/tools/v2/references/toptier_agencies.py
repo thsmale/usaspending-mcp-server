@@ -2,7 +2,7 @@ from typing import Any
 
 from mcp.types import Tool
 
-from utils.http import GetClient
+from utils.http import HttpClient
 
 tool_toptier_agencies = Tool(
     name="toptier_agencies",
@@ -28,11 +28,13 @@ tool_toptier_agencies = Tool(
                     "current_total_budget_authority_amount",
                     "percentage_of_total_budget_authority",
                 ],
+                "default": "percentage_of_total_budget_authority",
             },
             "order": {
                 "type": "string",
                 "description": "The direction that the sort field will be sorted in",
                 "enum": ["asc", "desc"],
+                "default": "desc",
             },
         },
     },
@@ -110,5 +112,7 @@ async def call_tool_toptier_agencies(arguments: dict[str, Any]):
         params["order"] = order
 
     endpoint = "/api/v2/references/toptier_agencies/"
-    get_client = GetClient(endpoint, params, response_schema)
+    get_client = HttpClient(
+        endpoint=endpoint, method="GET", params=params, response_schema=response_schema
+    )
     return await get_client.send()

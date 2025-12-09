@@ -1,4 +1,6 @@
-from httpx import AsyncClient
+import urllib.parse
+
+from httpx import AsyncClient, Request, Response
 from jsonschema import validate
 from mcp.shared.exceptions import McpError
 from mcp.types import (
@@ -7,28 +9,52 @@ from mcp.types import (
     TextContent,
 )
 
+api_url = "https://api.usaspending.gov"
+client = AsyncClient(timeout=None)
+
 
 class HttpClient:
-    api_url = "https://api.usaspending.gov"
-    client = AsyncClient()
+    def __init__(self, endpoint: str, method: str, params=None, payload=None, response_schema=None):
+        # Meant to catch mistakes, request to api_url alone would return no real results
+        if not isinstance(endpoint, str):
+            raise TypeError(f"Expected str for endpoint but received {type(endpoint)=}.")
 
-    def __init__(self, endpoint, payload, response_schema):
+        # Required to create the httpx.Request
+        if not isinstance(method, str):
+            raise TypeError(f"Expected str for method but received {type(method)=}")
+
         self.endpoint = endpoint
+        self.method = method
+        self.params = params
         self.payload = payload
         self.response_schema = response_schema
 
-    def validate_response(self, response):
+    def validate_response(self, response: Response) -> bool | None:
+        """
+        Most requests in my experience fail with silly validation errors.
+        See https://github.com/fedspendingtransparency/usaspending-api/issues/4513.
+        So at this moment, there is a warning log and the JSON received
+        from USA spending API is returned to the client.
+
+        In the future, we may want to further customize validate_response.
+        Such as requiring certain properties or types in the response payload.
+        """
         if self.response_schema is None:
-            return
+            return None
 
         try:
             payload = response.json()
             validate(instance=payload, schema=self.response_schema)
+            return True
         except Exception as e:
-            print(f"Warning the response did not contain the expected information {e}")
+            print(
+                "Warning the response did not contain the expected information. "
+                f"{e=} and {type(e)=}"
+            )
             pass
+        return False
 
-    def handle_response(self, response) -> list[TextContent]:
+    def handle_response(self, response: Response) -> list[TextContent]:
         if response.status_code >= 200 and response.status_code < 300:
             print(response.text)
             self.validate_response(response)
@@ -47,56 +73,33 @@ class HttpClient:
                 ErrorData(
                     code=INTERNAL_ERROR,
                     message=(
-                        f"Received unacceptable status code {response.status_code} "
-                        f"with response payload {response.text}"
+                        f"Received non 2xx response status code {response.status_code} "
+                        "from the USASpending API."
+                    ),
+                    data=(
+                        f"The {response.request.method} request to {str(response.request.url)} "
+                        f"with response payload {self.payload} "
+                        f"failed with HTTP status code {response.status_code} "
+                        f"and response payload {response.text}",
                     ),
                 )
             )
 
-
-class PostClient(HttpClient):
-    def __init__(self, endpoint, payload=None, response_schema=None):
-        self.endpoint = endpoint
-        self.payload = payload
-        self.response_schema = response_schema
-
     async def send(self):
+        url = f"{api_url}{self.endpoint}"
+        if self.params is not None:
+            url = url + urllib.parse.urlencode(self.params)
+
         try:
-            print(
-                f"Sending POST request to {self.endpoint} with request payload {self.payload}"
-            )
-            response = await self.client.post(
-                f"{self.api_url}{self.endpoint}", json=self.payload
-            )
+            request = Request(method=self.method, url=url, json=self.payload)
+            response = await client.send(request)
             return self.handle_response(response)
         except Exception as e:
-            print(e)
+            print(f"Request to {url} failed due to {e=} with {type(e)=}")
             raise McpError(
                 ErrorData(
                     code=INTERNAL_ERROR,
-                    message=f"The following error occurred in the MCP server {e}",
-                )
-            ) from e
-
-
-class GetClient(HttpClient):
-    def __init__(self, endpoint, params=None, response_schema=None):
-        self.endpoint = endpoint
-        self.params = params
-        self.response_schema = response_schema
-
-    async def send(self):
-        try:
-            print(f"Sending GET request to {self.endpoint} with params {self.params}")
-            response = await self.client.get(
-                f"{self.api_url}{self.endpoint}", params=self.params
-            )
-            return self.handle_response(response)
-        except Exception as e:
-            print(e)
-            raise McpError(
-                ErrorData(
-                    code=INTERNAL_ERROR,
-                    message=f"The following error occurred in the MCP server {e}",
+                    message="Unable to send the request to the USA Spending API.",
+                    data=(f"The request to {url} failed due to exception {e=} with {type(e)=}"),
                 )
             ) from e

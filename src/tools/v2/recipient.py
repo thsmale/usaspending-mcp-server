@@ -2,7 +2,7 @@ from typing import Any
 
 from mcp.types import Tool
 
-from utils.http import PostClient
+from utils.http import HttpClient
 
 tool_recipient = Tool(
     name="recipient",
@@ -14,10 +14,10 @@ tool_recipient = Tool(
         "type": "object",
         "required": [],
         "properties": {
-            "order": {"type": "string", "enum": ["asc", "desc"]},
-            "sort": {"type": "string", "enum": ["name", "duns", "amount"]},
-            "limit": {"type": "number"},
-            "page": {"type": "number"},
+            "order": {"type": "string", "enum": ["asc", "desc"], "default": "desc"},
+            "sort": {"type": "string", "enum": ["name", "duns", "amount"], "default": "amount"},
+            "limit": {"type": "number", "default": 50},
+            "page": {"type": "number", "default": 1},
             "keyword": {
                 "type": "string",
                 "description": (
@@ -34,6 +34,7 @@ tool_recipient = Tool(
                     "direct_payments",
                     "other_financial_assistance",
                 ],
+                "default": "all",
             },
         },
     },
@@ -123,5 +124,7 @@ async def call_tool_recipient(arguments: dict[str, Any]):
     if award_type is not None:
         payload["award_type"] = award_type
 
-    post_client = PostClient(endpoint, payload, response_schema)
+    post_client = HttpClient(
+        endpoint=endpoint, method="POST", payload=payload, response_schema=response_schema
+    )
     return await post_client.send()

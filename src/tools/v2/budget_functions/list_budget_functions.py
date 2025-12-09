@@ -1,6 +1,6 @@
 from mcp.types import Tool
 
-from utils.http import GetClient
+from utils.http import HttpClient
 
 tool_list_budget_functions = Tool(
     name="list_budget_functions",
@@ -29,5 +29,5 @@ response_schema = {
 
 async def call_tool_list_budget_functions():
     endpoint = "/api/v2/budget_functions/list_budget_functions/"
-    get_client = GetClient(endpoint=endpoint, response_schema=response_schema)
+    get_client = HttpClient(endpoint=endpoint, method="GET", response_schema=response_schema)
     return await get_client.send()

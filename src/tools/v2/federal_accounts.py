@@ -2,7 +2,7 @@ from typing import Any
 
 from mcp.types import Tool
 
-from utils.http import PostClient
+from utils.http import HttpClient
 
 tool_federal_accounts = Tool(
     name="federal_accounts",
@@ -18,9 +18,22 @@ tool_federal_accounts = Tool(
                 "type": "object",
                 "required": [],
                 "properties": {
-                    "fy": {"type": "string"},
+                    "fy": {
+                        "type": "string",
+                        "description": (
+                            "Providing fy does not change the rows that are returned, "
+                            "instead, it limits the budgetary_resources value to the "
+                            "fiscal year indicated. Federal accounts with no submissions "
+                            "for that fiscal year will return null."
+                        ),
+                        "default": "previous fiscal year",
+                    },
                     "agency_identifier": {"type": "string"},
                 },
+                "description": (
+                    "The filter takes a fiscal year, but if one is not provided, "
+                    "it defaults to the last certified fiscal year."
+                ),
             },
             "sort": {
                 "type": "object",
@@ -29,12 +42,26 @@ tool_federal_accounts = Tool(
                     "direction": {
                         "type": "string",
                         "enum": ["asc", "desc"],
-                    }
+                        "description": "The direction results are sorted by.",
+                        "default": "desc",
+                    },
+                    "field": {
+                        "type": "string",
+                        "enum": [
+                            "budgetary_resources",
+                            "account_name",
+                            "account_number",
+                            "managing_agency",
+                        ],
+                        "default": "budgetary_resources",
+                        "description": "The field that you want to sort on.",
+                    },
                 },
             },
             "limit": {
                 "type": "number",
-                "description": "The number of results to include per page. The default is 50",
+                "description": "The number of results to include per page.",
+                "default": 50,
             },
             "keyword": {
                 "type": "string",
@@ -86,8 +113,7 @@ response_schema = {
                     "account_name": {
                         "type": ["string", "null"],
                         "description": (
-                            "Name of the federal account. "
-                            "null when the name is not provided"
+                            "Name of the federal account. null when the name is not provided"
                         ),
                     },
                     "account_number": {
@@ -130,5 +156,7 @@ async def call_tool_federal_accounts(arguments: dict[str, Any]):
     if keyword is not None:
         payload["keyword"] = keyword
 
-    post_client = PostClient(endpoint, payload, response_schema)
+    post_client = HttpClient(
+        endpoint=endpoint, method="POST", payload=payload, response_schema=response_schema
+    )
     return await post_client.send()
