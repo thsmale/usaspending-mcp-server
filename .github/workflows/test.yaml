@@ -3,7 +3,7 @@ run-name: Testing ${{ github.ref }}
 on: [push, pull_request]
 
 jobs:
-  uv-example:
+  test:
     name: python
     runs-on: ubuntu-latest
 

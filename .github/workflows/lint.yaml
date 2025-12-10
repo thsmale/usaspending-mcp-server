@@ -3,7 +3,7 @@ run-name: Linting ${{ github.ref }}
 on: [push, pull_request]
 
 jobs:
-  uv-example:
+  lint:
     name: python
     runs-on: ubuntu-latest
     strategy:
