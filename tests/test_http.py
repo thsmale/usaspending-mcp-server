@@ -8,8 +8,8 @@ from httpx import Request, Response, TimeoutException
 from mcp.shared.exceptions import McpError
 from mcp.types import (
     INTERNAL_ERROR,
-    TextContent,
 )
+from validation import Validation
 
 from utils.http import HttpClient
 
@@ -128,21 +128,7 @@ class TestValidateResponse:
         assert result is False
 
 
-class Utils:
-    def validate_text_content(self, response, text="", validate_text=True):
-        """
-        At this stage, all API routes only return one TextContent
-        Should evaluate populating the array with more than one TextContent
-        """
-        assert isinstance(response, list)
-        assert len(response) == 1
-        assert isinstance(response[0], TextContent)
-        assert response[0].type == "text"
-        if validate_text:
-            assert response[0].text == text
-
-
-class TestHandleResponse(Utils):
+class TestHandleResponse(Validation):
     def test_2xx_status_code_response(self):
         http_client = HttpClient(endpoint="", method="")
         response = http_client.handle_response(Response(status_code=200))
@@ -175,7 +161,7 @@ class TestHandleResponse(Utils):
         assert "Received non 2xx response status code 500" in str(err.value)
 
 
-class TestSuccessfulSends(Utils):
+class TestSuccessfulSends(Validation):
     @pytest.mark.asyncio
     @patch(
         "utils.http.client.send",

@@ -4,7 +4,7 @@ import pytest
 from httpx import Response
 from mcp.shared.exceptions import McpError
 from mcp.types import INVALID_PARAMS
-from validation import Utils
+from validation import Validation
 
 from tools.config import (
     call_tool_federal_accounts,
@@ -20,7 +20,7 @@ from tools.config import (
 )
 
 
-class TestBudgetFunctions(Utils):
+class TestBudgetFunctions(Validation):
     @pytest.mark.asyncio
     @patch(
         "utils.http.client.send",
@@ -32,7 +32,7 @@ class TestBudgetFunctions(Utils):
         self.validate_text_content(res, text="{}")
 
 
-class TestFederalAccounts(Utils):
+class TestFederalAccounts(Validation):
     @pytest.mark.asyncio
     @patch(
         "utils.http.client.send",
@@ -44,7 +44,7 @@ class TestFederalAccounts(Utils):
         self.validate_text_content(res, text="{}")
 
 
-class TestMajorObjectClass(Utils):
+class TestMajorObjectClass(Validation):
     @pytest.mark.asyncio
     async def test_no_fiscal_year_provided(self):
         with pytest.raises(McpError) as err:
@@ -78,7 +78,7 @@ class TestMajorObjectClass(Utils):
         self.validate_text_content(res, text="{}")
 
 
-class TestRecipient(Utils):
+class TestRecipient(Validation):
     @pytest.mark.asyncio
     @patch(
         "utils.http.client.send",
@@ -90,7 +90,7 @@ class TestRecipient(Utils):
         self.validate_text_content(res, text="{}")
 
 
-class TestTopTierAgencies(Utils):
+class TestTopTierAgencies(Validation):
     @pytest.mark.asyncio
     @patch(
         "utils.http.client.send",
@@ -102,7 +102,7 @@ class TestTopTierAgencies(Utils):
         self.validate_text_content(res, text="{}")
 
 
-class TestTotalBudgetaryResources(Utils):
+class TestTotalBudgetaryResources(Validation):
     @pytest.mark.asyncio
     async def test_year_less_than_2017(self):
         with pytest.raises(McpError) as err:
@@ -128,7 +128,7 @@ class TestTotalBudgetaryResources(Utils):
         self.validate_text_content(res, text="{}")
 
 
-class TestSpendingByAward(Utils):
+class TestSpendingByAward(Validation):
     @pytest.mark.asyncio
     async def test_no_filters_provided(self):
         with pytest.raises(McpError) as err:
@@ -154,7 +154,7 @@ class TestSpendingByAward(Utils):
         self.validate_text_content(res, text="{}")
 
 
-class TestSpendingOverTime(Utils):
+class TestSpendingOverTime(Validation):
     @pytest.mark.asyncio
     async def test_no_group_provided(self):
         with pytest.raises(McpError) as err:
@@ -180,7 +180,7 @@ class TestSpendingOverTime(Utils):
         self.validate_text_content(res, text="{}")
 
 
-class TestSpending(Utils):
+class TestSpending(Validation):
     @pytest.mark.asyncio
     async def test_no_type_provided(self):
         with pytest.raises(McpError) as err:
@@ -206,7 +206,7 @@ class TestSpending(Utils):
         self.validate_text_content(res, text="{}")
 
 
-class TestSubawards(Utils):
+class TestSubawards(Validation):
     arguments = {}
 
     @pytest.mark.asyncio

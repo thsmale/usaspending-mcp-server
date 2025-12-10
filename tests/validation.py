@@ -1,7 +1,7 @@
 from mcp.types import TextContent
 
 
-class Utils:
+class Validation:
     def validate_text_content(self, response, text="", validate_text=True):
         """
         At this stage, all API routes only return one TextContent
