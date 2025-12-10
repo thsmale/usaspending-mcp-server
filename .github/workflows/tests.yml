@@ -1,0 +1,58 @@
+name: Tests
+run-name: Testing ${{ github.ref }}
+on: [push, pull_request]
+
+jobs:
+  lint:
+    name: python
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          # Install a specific version of uv.
+          version: "0.8.22"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: 'pyproject.toml'
+      
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
+      
+      - name: Run linter
+        run: uvx ruff check
+
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+        python-version:
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install uv and set the Python version
+        uses: astral-sh/setup-uv@v7
+        with:
+          # Install a specific version of uv.
+          version: "0.8.22"
+          enable-cache: true
+          python-version: ${{ matrix.python-version }}
+      
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
+      
+      - name: Run tests
+        run: uv run pytest
