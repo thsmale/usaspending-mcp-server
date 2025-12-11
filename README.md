@@ -70,7 +70,7 @@ In the future, the process of copying a contract over and using it to create a n
 ## Testing
 [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector) is a good way to test the input and output schema without connecting to a LLM.
 There is also a sample [MCP Client](tests/README.md) to test the application using OpenAI.
-There are also a variety of unit tests focusing on the tool handlers and HTTP calls to the USASpending API.
+There are also a variety of unit tests focusing on the tool handlers, input/output schemas, and HTTP calls to the USASpending API.
 They can be run with the following command.
 ```sh
 uv run pytest
