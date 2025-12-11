@@ -4,7 +4,6 @@ from mcp.types import Tool
 
 from utils.http import HttpClient
 
-
 input_schema = {
     "type": "object",
     "required": [],
