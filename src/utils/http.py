@@ -14,7 +14,7 @@ client = AsyncClient(timeout=None)
 
 
 class HttpClient:
-    def __init__(self, endpoint: str, method: str, params=None, payload=None, response_schema=None):
+    def __init__(self, endpoint: str, method: str, params=None, payload=None, output_schema=None):
         # Meant to catch mistakes, request to api_url alone would return no real results
         if not isinstance(endpoint, str):
             raise TypeError(f"Expected str for endpoint but received {type(endpoint)=}.")
@@ -27,7 +27,7 @@ class HttpClient:
         self.method = method
         self.params = params
         self.payload = payload
-        self.response_schema = response_schema
+        self.output_schema = output_schema
 
     def validate_response(self, response: Response) -> bool | None:
         """
@@ -39,12 +39,12 @@ class HttpClient:
         In the future, we may want to further customize validate_response.
         Such as requiring certain properties or types in the response payload.
         """
-        if self.response_schema is None:
+        if self.output_schema is None:
             return None
 
         try:
             payload = response.json()
-            validate(instance=payload, schema=self.response_schema)
+            validate(instance=payload, schema=self.output_schema)
             return True
         except Exception as e:
             print(

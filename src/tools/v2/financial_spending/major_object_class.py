@@ -6,33 +6,26 @@ from mcp.types import INVALID_PARAMS, ErrorData, Tool
 
 from utils.http import HttpClient
 
-tool_major_object_class = Tool(
-    name="major_object_class",
-    description=(
-        "This data can be used to better understand the different ways "
-        "that a specific agency spends money"
-    ),
-    inputSchema={
-        "type": "object",
-        "required": ["fiscal_year", "funding_agency_id"],
-        "properties": {
-            "fiscal_year": {
-                "type": "number",
-                "description": "The fiscal year that you are querying data for",
-                "default": date.today().year,
-            },
-            "funding_agency_id": {
-                "type": "number",
-                "description": (
-                    "The unique USAspending.gov agency identifier. "
-                    "This ID is the agency_id value returned in the toptier_agencies tool"
-                ),
-            },
+input_schema = {
+    "type": "object",
+    "required": ["fiscal_year", "funding_agency_id"],
+    "properties": {
+        "fiscal_year": {
+            "type": "number",
+            "description": "The fiscal year that you are querying data for",
+            "default": date.today().year,
+        },
+        "funding_agency_id": {
+            "type": "number",
+            "description": (
+                "The unique USAspending.gov agency identifier. "
+                "This ID is the agency_id value returned in the toptier_agencies tool"
+            ),
         },
     },
-)
+}
 
-response_schema = {
+output_schema = {
     "type": "object",
     "required": ["results"],
     "properties": {
@@ -54,6 +47,15 @@ response_schema = {
         }
     },
 }
+
+tool_major_object_class = Tool(
+    name="major_object_class",
+    description=(
+        "This data can be used to better understand the different ways "
+        "that a specific agency spends money"
+    ),
+    inputSchema=input_schema,
+)
 
 
 async def call_tool_major_object_class(arguments: dict[str, Any]):
@@ -87,6 +89,6 @@ async def call_tool_major_object_class(arguments: dict[str, Any]):
 
     endpoint = "/api/v2/financial_spending/major_object_class/"
     get_client = HttpClient(
-        endpoint=endpoint, method="GET", params=params, response_schema=response_schema
+        endpoint=endpoint, method="GET", params=params, output_schema=output_schema
     )
     return await get_client.send()

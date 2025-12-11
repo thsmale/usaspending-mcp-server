@@ -19,36 +19,39 @@ agency_object = {
     },
 }
 
+object_award_types = [
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "A",
+    "B",
+    "C",
+    "D",
+    "IDV_A",
+    "IDV_B",
+    "IDV_B_A",
+    "IDV_B_B",
+    "IDV_B_C",
+    "IDV_C",
+    "IDV_D",
+    "IDV_E",
+]
+
 filter_object_award_types = {
     "type": "array",
-    "default": ["A", "B", "C", "D"],
+    "default": object_award_types,
     "items": {
         "type": "string",
-        "enum": [
-            "02",
-            "03",
-            "04",
-            "05",
-            "06",
-            "07",
-            "08",
-            "09",
-            "10",
-            "11",
-            "A",
-            "B",
-            "C",
-            "D",
-            "IDV_A",
-            "IDV_B",
-            "IDV_B_A",
-            "IDV_B_B",
-            "IDV_B_C",
-            "IDV_C",
-            "IDV_D",
-            "IDV_E",
-        ],
+        "enum": object_award_types,
     },
+    "description": "List of filterable award types. For example [A, B, C, D].",
 }
 
 standard_location_object = {
@@ -203,43 +206,40 @@ treasury_account_components = {
         "properties": {
             "ata": {
                 "type": ["string", "null"],
-                "description": "Allocation Transfer Agency Identifier - three characters.",
+                "description": "Allocation Transfer Agency Identifier.",
                 "minLength": 3,
                 "maxLength": 3,
             },
             "aid": {
                 "type": "string",
-                "description": "Agency Identifier - three characters.",
+                "description": "Agency Identifier.",
                 "minLength": 3,
                 "maxLength": 3,
             },
             "bpoa": {
                 "type": ["string", "null"],
                 "description": "Beginning Period of Availability - four digits.",
-                "minLength": 4,
-                "maxLength": 4,
+                "pattern": "^\\d{4}$",
             },
             "epoa": {
                 "type": ["string", "null"],
                 "description": "Ending Period of Availability - four digits.",
-                "minLength": 4,
-                "maxLength": 4,
+                "pattern": "^\\d{4}$",
             },
             "a": {
                 "type": ["string", "null"],
                 "description": "Availability Type Code - X or null.",
+                "enum": ["X", "null"],
             },
             "main": {
                 "type": "string",
                 "description": "Main Account Code - four digits.",
-                "minLength": 4,
-                "maxLength": 4,
+                "pattern": "^\\d{4}$",
             },
             "sub": {
                 "type": ["string", "null"],
                 "description": "Sub-Account Code - three digits.",
-                "minLength": 3,
-                "maxLength": 3,
+                "pattern": "^\\d{3}$",
             },
         },
     },
@@ -261,8 +261,8 @@ advanced_filter_object = {
             "type": "array",
             "items": {"type": "string"},
             "description": (
-                "Text searched across a recipient's name, UEI, and DUNS. ",
-                "For example, Hampton or Roads.",
+                "Text searched across a recipient's name, UEI, and DUNS. "
+                "For example, Hampton or Roads."
             ),
             "minItems": 1,  # Will return 422 if this is below min 1 items
         },
@@ -339,8 +339,8 @@ advanced_filter_object = {
                 },
             },
             "description": (
-                "Supports new PSCCodeObject or legacy array of codes. ",
-                "For example, [[Service, B, B5, B502]].",
+                "Supports new PSCCodeObject or legacy array of codes. "
+                "For example, [[Service, B, B5, B502]]."
             ),
         },
         "contract_pricing_type_codes": {
@@ -361,14 +361,18 @@ advanced_filter_object = {
         "treasury_account_components": treasury_account_components,
         "program_activity": {"type": "array", "items": {"type": "string"}},
         "program_activities": {
-            "type": "object",
+            "type": "array",
             "description": (
                 "A filter option that supports filtering by a program activity name or code. "
                 "If this is used at least name or code must be provided."
             ),
-            "properties": {
-                "name": {"type": "string"},
-                "code": {"type": "string"},
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "code": {"type": "string"},
+                },
+                "anyOf": [{"required": ["name"]}, {"required": ["code"]}],
             },
         },
     },

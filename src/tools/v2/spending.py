@@ -6,67 +6,59 @@ from mcp.types import INVALID_PARAMS, ErrorData, Tool
 
 from utils.http import HttpClient
 
-tool_spending = Tool(
-    name="spending",
-    description=(
-        "This data can be used to drill down into specific subsets of data by level of detail. "
-        "This data represents all government spending in the specified time period, "
-        "grouped by the data type of your choice."
-    ),
-    inputSchema={
-        "type": "object",
-        "required": ["type", "filters"],
-        "properties": {
-            "type": {
-                "type": "string",
-                "enum": [
-                    "federal_account",
-                    "object_class",
-                    "recipient",
-                    "award",
-                    "budget_function",
-                    "budget_subfunction",
-                    "agency",
-                    "program_activity",
-                ],
-            },
-            "filters": {
-                "type": "object",
-                "required": ["fy"],
-                "properties": {
-                    "fy": {"type": "string", "default": date.today().strftime("%Y")},
-                    "quarter": {"type": "string", "enum": ["1", "2", "3", "4"]},
-                    "period": {
-                        "type": "string",
-                        "enum": [
-                            "1",
-                            "2",
-                            "3",
-                            "4",
-                            "5",
-                            "6",
-                            "7",
-                            "8",
-                            "9",
-                            "10",
-                            "11",
-                            "12",
-                        ],
-                    },
-                    "agency": {"type": "number"},
-                    "federal_account": {"type": "number"},
-                    "object_class": {"type": "number"},
-                    "budget_function": {"type": "number"},
-                    "budget_subfunction": {"type": "number"},
-                    "recipient": {"type": "number"},
-                    "program_activity": {"type": "number"},
+input_schema = {
+    "type": "object",
+    "required": ["type", "filters"],
+    "properties": {
+        "type": {
+            "type": "string",
+            "enum": [
+                "federal_account",
+                "object_class",
+                "recipient",
+                "award",
+                "budget_function",
+                "budget_subfunction",
+                "agency",
+                "program_activity",
+            ],
+        },
+        "filters": {
+            "type": "object",
+            "required": ["fy"],
+            "properties": {
+                "fy": {"type": "string", "default": date.today().strftime("%Y")},
+                "quarter": {"type": "string", "enum": ["1", "2", "3", "4"]},
+                "period": {
+                    "type": "string",
+                    "enum": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8",
+                        "9",
+                        "10",
+                        "11",
+                        "12",
+                    ],
                 },
+                "agency": {"type": "number"},
+                "federal_account": {"type": "number"},
+                "object_class": {"type": "number"},
+                "budget_function": {"type": "number"},
+                "budget_subfunction": {"type": "number"},
+                "recipient": {"type": "number"},
+                "program_activity": {"type": "number"},
             },
         },
     },
-)
+}
 
-response_schema = {
+output_schema = {
     "type": "object",
     "required": ["total", "end_date", "results"],
     "properties": {
@@ -91,6 +83,16 @@ response_schema = {
         },
     },
 }
+
+tool_spending = Tool(
+    name="spending",
+    description=(
+        "This data can be used to drill down into specific subsets of data by level of detail. "
+        "This data represents all government spending in the specified time period, "
+        "grouped by the data type of your choice."
+    ),
+    inputSchema=input_schema,
+)
 
 
 async def call_tool_spending(arguments: dict[str, Any]):
@@ -120,6 +122,6 @@ async def call_tool_spending(arguments: dict[str, Any]):
     }
 
     post_client = HttpClient(
-        endpoint=endpoint, method="POST", payload=payload, response_schema=response_schema
+        endpoint=endpoint, method="POST", payload=payload, output_schema=output_schema
     )
     return await post_client.send()

@@ -4,78 +4,72 @@ from mcp.types import Tool
 
 from utils.http import HttpClient
 
-tool_federal_accounts = Tool(
-    name="federal_accounts",
-    description=(
-        "This returns a list of federal accounts, their number, name, managing agency, "
-        "and budgetary resources"
-    ),
-    inputSchema={
-        "type": "object",
-        "required": [],
-        "properties": {
-            "filters": {
-                "type": "object",
-                "required": [],
-                "properties": {
-                    "fy": {
-                        "type": "string",
-                        "description": (
-                            "Providing fy does not change the rows that are returned, "
-                            "instead, it limits the budgetary_resources value to the "
-                            "fiscal year indicated. Federal accounts with no submissions "
-                            "for that fiscal year will return null."
-                        ),
-                        "default": "previous fiscal year",
-                    },
-                    "agency_identifier": {"type": "string"},
+
+input_schema = {
+    "type": "object",
+    "required": [],
+    "properties": {
+        "filters": {
+            "type": "object",
+            "required": [],
+            "properties": {
+                "fy": {
+                    "type": "string",
+                    "description": (
+                        "Providing fy does not change the rows that are returned, "
+                        "instead, it limits the budgetary_resources value to the "
+                        "fiscal year indicated. Federal accounts with no submissions "
+                        "for that fiscal year will return null."
+                    ),
+                    "default": "previous fiscal year",
                 },
-                "description": (
-                    "The filter takes a fiscal year, but if one is not provided, "
-                    "it defaults to the last certified fiscal year."
-                ),
+                "agency_identifier": {"type": "string"},
             },
-            "sort": {
-                "type": "object",
-                "required": [],
-                "properties": {
-                    "direction": {
-                        "type": "string",
-                        "enum": ["asc", "desc"],
-                        "description": "The direction results are sorted by.",
-                        "default": "desc",
-                    },
-                    "field": {
-                        "type": "string",
-                        "enum": [
-                            "budgetary_resources",
-                            "account_name",
-                            "account_number",
-                            "managing_agency",
-                        ],
-                        "default": "budgetary_resources",
-                        "description": "The field that you want to sort on.",
-                    },
+            "description": (
+                "The filter takes a fiscal year, but if one is not provided, "
+                "it defaults to the last certified fiscal year."
+            ),
+        },
+        "sort": {
+            "type": "object",
+            "required": [],
+            "properties": {
+                "direction": {
+                    "type": "string",
+                    "enum": ["asc", "desc"],
+                    "description": "The direction results are sorted by.",
+                    "default": "desc",
                 },
-            },
-            "limit": {
-                "type": "number",
-                "description": "The number of results to include per page.",
-                "default": 50,
-            },
-            "keyword": {
-                "type": "string",
-                "description": (
-                    "They keyword that you want to search on. "
-                    "Can be used to search by name, number, managing agency, "
-                    "and budgetary resources"
-                ),
+                "field": {
+                    "type": "string",
+                    "enum": [
+                        "budgetary_resources",
+                        "account_name",
+                        "account_number",
+                        "managing_agency",
+                    ],
+                    "default": "budgetary_resources",
+                    "description": "The field that you want to sort on.",
+                },
             },
         },
+        "limit": {
+            "type": "number",
+            "description": "The number of results to include per page.",
+            "default": 50,
+        },
+        "keyword": {
+            "type": "string",
+            "description": (
+                "They keyword that you want to search on. "
+                "Can be used to search by name, number, managing agency, "
+                "and budgetary resources"
+            ),
+        },
     },
-)
+}
 
-response_schema = {
+output_schema = {
     "type": "object",
     "required": [
         "count",
@@ -135,6 +129,15 @@ response_schema = {
     },
 }
 
+tool_federal_accounts = Tool(
+    name="federal_accounts",
+    description=(
+        "This returns a list of federal accounts, their number, name, managing agency, "
+        "and budgetary resources"
+    ),
+    inputSchema=input_schema,
+)
+
 
 async def call_tool_federal_accounts(arguments: dict[str, Any]):
     endpoint = "/api/v2/federal_accounts/"
@@ -157,6 +160,6 @@ async def call_tool_federal_accounts(arguments: dict[str, Any]):
         payload["keyword"] = keyword
 
     post_client = HttpClient(
-        endpoint=endpoint, method="POST", payload=payload, response_schema=response_schema
+        endpoint=endpoint, method="POST", payload=payload, output_schema=output_schema
     )
     return await post_client.send()

@@ -40,7 +40,7 @@ tool_toptier_agencies = Tool(
     },
 )
 
-response_schema = {
+output_schema = {
     "type": "object",
     "required": ["results"],
     "properties": {
@@ -113,6 +113,6 @@ async def call_tool_toptier_agencies(arguments: dict[str, Any]):
 
     endpoint = "/api/v2/references/toptier_agencies/"
     get_client = HttpClient(
-        endpoint=endpoint, method="GET", params=params, response_schema=response_schema
+        endpoint=endpoint, method="GET", params=params, output_schema=output_schema
     )
     return await get_client.send()

@@ -104,61 +104,48 @@ spending_by_award_response_properties = [
     "agency_slug",
 ]
 
-"""
-We are going to take a different approach for this tool versus spending_by_geography.
-I am not adding every single filter property.
-Since I am worried a more complex input schema may overwhelm the LLM.
-Weird, initially I didn't event supply recipient_search_text.
-Regardless, the LLM still tried to use it in a query so I added it.
-"""
-tool_spending_by_award = Tool(
-    name="spending_by_award",
-    description=(
-        "This allows for complex filtering for specific subsets of spending data. "
-        "This accepts filters and fields, and returns the fields of the filtered awards."
-    ),
-    inputSchema={
-        "type": "object",
-        "required": ["filters", "fields"],
-        "properties": {
-            "filters": award_advanced_filter_object,
-            "fields": spending_by_award_fields,
-            "limit": {
-                "type": "number",
-                "description": "How many results are returned.",
-                "default": 10,
-            },
-            "order": {
-                "type": "string",
-                "enum": ["asc", "desc"],
-                "default": "desc",
-                "description": "Indicates what direction results should be sorted by.",
-            },
-            "sort": {
-                "type": "string",
-                "description": "What value the results should be sorted by.",
-                "enum": spending_by_award_response_properties,
-            },
-            "page": {"type": "string"},
-            "subawards": {
-                "type": "boolean",
-                "description": "True when you want to group by Subawards instead of Awards",
-                "default": False,
-            },
-            "spending_level": {
-                "type": "string",
-                "description": (
-                    "Group the spending by level. "
-                    "This also determines what data source is used for the totals"
-                ),
-                "enum": ["awards", "subawards"],
-                "default": "awards",
-            },
+
+input_schema = {
+    "type": "object",
+    "required": ["filters", "fields"],
+    "properties": {
+        "filters": award_advanced_filter_object,
+        "fields": spending_by_award_fields,
+        "limit": {
+            "type": "number",
+            "description": "How many results are returned.",
+            "default": 10,
+        },
+        "order": {
+            "type": "string",
+            "enum": ["asc", "desc"],
+            "default": "desc",
+            "description": "Indicates what direction results should be sorted by.",
+        },
+        "sort": {
+            "type": "string",
+            "description": "What value the results should be sorted by.",
+            "enum": spending_by_award_response_properties,
+        },
+        "page": {"type": "string"},
+        "subawards": {
+            "type": "boolean",
+            "description": "True when you want to group by Subawards instead of Awards",
+            "default": False,
+        },
+        "spending_level": {
+            "type": "string",
+            "description": (
+                "Group the spending by level. "
+                "This also determines what data source is used for the totals"
+            ),
+            "enum": ["awards", "subawards"],
+            "default": "awards",
         },
     },
-)
+}
 
-response_schema = {
+output_schema = {
     "type": "object",
     "required": ["spending_level", "limit", "results"],
     "properties": {
@@ -247,6 +234,22 @@ response_schema = {
     },
 }
 
+"""
+We are going to take a different approach for this tool versus spending_by_geography.
+I am not adding every single filter property.
+Since I am worried a more complex input schema may overwhelm the LLM.
+Weird, initially I didn't event supply recipient_search_text.
+Regardless, the LLM still tried to use it in a query so I added it.
+"""
+tool_spending_by_award = Tool(
+    name="spending_by_award",
+    description=(
+        "This allows for complex filtering for specific subsets of spending data. "
+        "This accepts filters and fields, and returns the fields of the filtered awards."
+    ),
+    inputSchema=input_schema,
+)
+
 
 async def call_tool_spending_by_award(arguments: dict[str, Any]):
     endpoint = "/api/v2/search/spending_by_award/"
@@ -293,6 +296,6 @@ async def call_tool_spending_by_award(arguments: dict[str, Any]):
         payload["spending_level"] = spending_level
 
     post_client = HttpClient(
-        endpoint=endpoint, method="POST", payload=payload, response_schema=response_schema
+        endpoint=endpoint, method="POST", payload=payload, output_schema=output_schema
     )
     return await post_client.send()

@@ -55,7 +55,7 @@ class TestHttpClientInit:
         """
         http_client = HttpClient(endpoint="", method="")
         instance_vars = vars(http_client)
-        expected_vars = ["endpoint", "method", "params", "payload", "response_schema"]
+        expected_vars = ["endpoint", "method", "params", "payload", "output_schema"]
         assert len(instance_vars) == len(expected_vars)
         assert sorted(instance_vars) == sorted(expected_vars)
 
@@ -75,7 +75,7 @@ class TestValidateResponse:
         assert result is None
 
     def test_non_response_type_passed(self):
-        http_client = HttpClient(endpoint="", method="", response_schema={})
+        http_client = HttpClient(endpoint="", method="", output_schema={})
         result = http_client.validate_response(2)
         assert result is False
 
@@ -84,7 +84,7 @@ class TestValidateResponse:
         http_client = HttpClient(
             endpoint="",
             method="",
-            response_schema={
+            output_schema={
                 "type": "object",
                 "required": ["x"],
                 "properties": {"x": {"type": "number"}},
@@ -98,7 +98,7 @@ class TestValidateResponse:
         http_client = HttpClient(
             endpoint="",
             method="",
-            response_schema={
+            output_schema={
                 "type": "object",
                 "required": ["x"],
                 "properties": {"x": {"type": "string"}},
@@ -112,7 +112,7 @@ class TestValidateResponse:
         http_client = HttpClient(
             endpoint="",
             method="",
-            response_schema={
+            output_schema={
                 "type": "object",
                 "required": ["x"],
                 "properties": {"x": {"type": "number"}},
@@ -123,7 +123,7 @@ class TestValidateResponse:
 
     def test_response_with_text(self):
         response = Response(status_code=200, text="hello world")
-        http_client = HttpClient(endpoint="", method="", response_schema={})
+        http_client = HttpClient(endpoint="", method="", output_schema={})
         result = http_client.validate_response(response)
         assert result is False
 
@@ -135,7 +135,7 @@ class TestHandleResponse(Validation):
         self.validate_text_content(response)
 
     def test_2xx_response_schema_err(self):
-        http_client = HttpClient(endpoint="", method="", response_schema={})
+        http_client = HttpClient(endpoint="", method="", output_schema={})
         response = http_client.handle_response(Response(status_code=200, text=""))
         self.validate_text_content(response)
 
@@ -205,7 +205,7 @@ class TestSuccessfulSends(Validation):
             status_code=200,
             json=json_response,
         )
-        get_client = HttpClient(method="GET", endpoint="/", response_schema=expected_json_schema)
+        get_client = HttpClient(method="GET", endpoint="/", output_schema=expected_json_schema)
         res = await get_client.send()
         mock_send.assert_called_once()
         self.validate_text_content(res, validate_text=False)

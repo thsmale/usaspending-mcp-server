@@ -2,13 +2,9 @@ from mcp.types import Tool
 
 from utils.http import HttpClient
 
-tool_list_budget_functions = Tool(
-    name="list_budget_functions",
-    description="This retrieves a list of all Budget Functions ordered by their title",
-    inputSchema={"type": "object", "properties": {}},
-)
+input_schema = {"type": "object", "properties": {}}
 
-response_schema = {
+output_schema = {
     "type": "object",
     "required": ["results"],
     "properties": {
@@ -26,8 +22,14 @@ response_schema = {
     },
 }
 
+tool_list_budget_functions = Tool(
+    name="list_budget_functions",
+    description="This retrieves a list of all Budget Functions ordered by their title",
+    inputSchema=input_schema,
+)
+
 
 async def call_tool_list_budget_functions():
     endpoint = "/api/v2/budget_functions/list_budget_functions/"
-    get_client = HttpClient(endpoint=endpoint, method="GET", response_schema=response_schema)
+    get_client = HttpClient(endpoint=endpoint, method="GET", output_schema=output_schema)
     return await get_client.send()

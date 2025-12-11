@@ -34,7 +34,7 @@ tool_total_budgetary_resources = Tool(
     },
 )
 
-response_schema = {
+output_schema = {
     "type": "object",
     "properties": {
         "messages": {
@@ -105,6 +105,6 @@ async def call_tool_total_budgetary_resources(arguments: dict[str, Any]):
 
     endpoint = "/api/v2/references/total_budgetary_resources/"
     get_client = HttpClient(
-        endpoint=endpoint, method="GET", params=params, response_schema=response_schema
+        endpoint=endpoint, method="GET", params=params, output_schema=output_schema
     )
     return await get_client.send()

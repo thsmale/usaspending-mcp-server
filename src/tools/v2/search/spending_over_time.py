@@ -6,41 +6,34 @@ from mcp.types import INVALID_PARAMS, ErrorData, Tool
 from tools.v2.search.config import advanced_filter_object
 from utils.http import HttpClient
 
-tool_spending_over_time = Tool(
-    name="spending_over_time",
-    description=(
-        "This returns a list of aggregated award amounts grouped by time period "
-        "in ascending order (earliest to most recent)"
-    ),
-    inputSchema={
-        "type": "object",
-        "required": ["group", "filters"],
-        "properties": {
-            "group": {
-                "type": "string",
-                "enum": ["calendar_year", "fiscal_year", "quarter", "month"],
-                "default": "fiscal_year",
-            },
-            "filters": advanced_filter_object,
-            "subawards": {
-                "type": "boolean",
-                "description": "True to group by sub-awards instead of prime awards.",
-                "default": False,
-            },
-            "spending_level": {
-                "type": "string",
-                "enum": ["transactions", "awards", "subawards"],
-                "description": (
-                    "Group the spending by level. "
-                    "This also determines what data source is used for the totals."
-                ),
-                "default": "transactions",
-            },
+input_schema = {
+    "type": "object",
+    "required": ["group", "filters"],
+    "properties": {
+        "group": {
+            "type": "string",
+            "enum": ["calendar_year", "fiscal_year", "quarter", "month"],
+            "default": "fiscal_year",
+        },
+        "filters": advanced_filter_object,
+        "subawards": {
+            "type": "boolean",
+            "description": "True to group by sub-awards instead of prime awards.",
+            "default": False,
+        },
+        "spending_level": {
+            "type": "string",
+            "enum": ["transactions", "awards", "subawards"],
+            "description": (
+                "Group the spending by level. "
+                "This also determines what data source is used for the totals."
+            ),
+            "default": "transactions",
         },
     },
-)
+}
 
-response_schema = {
+output_schema = {
     "type": "object",
     "required": ["group", "spending_level", "results", "messages"],
     "properties": {
@@ -111,6 +104,15 @@ response_schema = {
     },
 }
 
+tool_spending_over_time = Tool(
+    name="spending_over_time",
+    description=(
+        "This returns a list of aggregated award amounts grouped by time period "
+        "in ascending order (earliest to most recent)"
+    ),
+    inputSchema=input_schema,
+)
+
 
 async def call_tool_spending_over_time(arguments: dict[str, Any]):
     endpoint = "/api/v2/search/spending_over_time/"
@@ -145,7 +147,5 @@ async def call_tool_spending_over_time(arguments: dict[str, Any]):
     if spending_level is not None:
         payload["spending_level"] = spending_level
 
-    post_client = await HttpClient(
-        endpoint=endpoint, payload=payload, response_schema=response_schema
-    )
+    post_client = await HttpClient(endpoint=endpoint, payload=payload, output_schema=output_schema)
     return post_client.send()

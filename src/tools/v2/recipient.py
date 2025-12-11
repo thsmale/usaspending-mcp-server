@@ -4,43 +4,35 @@ from mcp.types import Tool
 
 from utils.http import HttpClient
 
-tool_recipient = Tool(
-    name="recipient",
-    description=(
-        "This can be used to visualize government spending that pertains to a specific recipient. "
-        "This returns a list of recipients, their level, DUNS, UEI, and amount."
-    ),
-    inputSchema={
-        "type": "object",
-        "required": [],
-        "properties": {
-            "order": {"type": "string", "enum": ["asc", "desc"], "default": "desc"},
-            "sort": {"type": "string", "enum": ["name", "duns", "amount"], "default": "amount"},
-            "limit": {"type": "number", "default": 50},
-            "page": {"type": "number", "default": 1},
-            "keyword": {
-                "type": "string",
-                "description": (
-                    "They keyword results are filtered by. Searches on name, UEI, or DUNS"
-                ),
-            },
-            "award_type": {
-                "type": "string",
-                "enum": [
-                    "all",
-                    "contracts",
-                    "grants",
-                    "loans",
-                    "direct_payments",
-                    "other_financial_assistance",
-                ],
-                "default": "all",
-            },
+input_schema = {
+    "type": "object",
+    "required": [],
+    "properties": {
+        "order": {"type": "string", "enum": ["asc", "desc"], "default": "desc"},
+        "sort": {"type": "string", "enum": ["name", "duns", "amount"], "default": "amount"},
+        "limit": {"type": "number", "default": 50, "maximum": 1000},
+        "page": {"type": "number", "default": 1},
+        "keyword": {
+            "type": "string",
+            "description": ("They keyword results are filtered by. Searches on name, UEI, or DUNS"),
+        },
+        "award_type": {
+            "type": "string",
+            "enum": [
+                "all",
+                "contracts",
+                "grants",
+                "loans",
+                "direct_payments",
+                "other_financial_assistance",
+            ],
+            "default": "all",
         },
     },
-)
+}
 
-response_schema = {
+
+output_schema = {
     "type": "object",
     "required": [],
     "properties": {
@@ -100,6 +92,15 @@ response_schema = {
     },
 }
 
+tool_recipient = Tool(
+    name="recipient",
+    description=(
+        "This can be used to visualize government spending that pertains to a specific recipient. "
+        "This returns a list of recipients, their level, DUNS, UEI, and amount."
+    ),
+    inputSchema=input_schema,
+)
+
 
 async def call_tool_recipient(arguments: dict[str, Any]):
     endpoint = "/api/v2/recipient/"
@@ -125,6 +126,6 @@ async def call_tool_recipient(arguments: dict[str, Any]):
         payload["award_type"] = award_type
 
     post_client = HttpClient(
-        endpoint=endpoint, method="POST", payload=payload, response_schema=response_schema
+        endpoint=endpoint, method="POST", payload=payload, output_schema=output_schema
     )
     return await post_client.send()
