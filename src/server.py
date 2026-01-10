@@ -50,7 +50,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 
-app = Server("mcp-streamable-http-stateless-demo")
+app = Server("usa-spending-mcp-server")
 
 
 @app.call_tool()

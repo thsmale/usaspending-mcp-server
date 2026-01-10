@@ -147,5 +147,10 @@ async def call_tool_spending_over_time(arguments: dict[str, Any]):
     if spending_level is not None:
         payload["spending_level"] = spending_level
 
-    post_client = await HttpClient(endpoint=endpoint, payload=payload, output_schema=output_schema)
-    return post_client.send()
+    post_client = HttpClient(
+        endpoint=endpoint,
+        method="POST",
+        payload=payload,
+        output_schema=output_schema,
+    )
+    return await post_client.send()

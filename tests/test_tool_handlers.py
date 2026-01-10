@@ -196,6 +196,13 @@ class TestSpending(Validation):
         assert "filters must be provided" in err.value.error.message
 
     @pytest.mark.asyncio
+    async def test_invalid_date_range(self):
+        with pytest.raises(McpError) as err:
+            await call_tool_spending({"type": "test", "filters": {"fy": "2017", "quarter": "1"}})
+        assert err.value.error.code == INVALID_PARAMS
+        assert "Data is not available prior to FY 2017 Q2" in err.value.error.message
+
+    @pytest.mark.asyncio
     @patch(
         "utils.http.client.send",
     )

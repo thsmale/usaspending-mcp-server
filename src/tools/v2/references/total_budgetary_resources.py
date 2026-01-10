@@ -5,34 +5,28 @@ from mcp.types import INVALID_PARAMS, ErrorData, Tool
 
 from utils.http import HttpClient
 
-tool_total_budgetary_resources = Tool(
-    name="total_budgetary_resources",
-    description=(
-        "This is used to provide information on the federal budgetary resources of the government"
-    ),
-    inputSchema={
-        "type": "object",
-        "required": [],
-        "properties": {
-            "fiscal_year": {
-                "type": "number",
-                "description": "The fiscal year to retrieve, 2017 or later",
-            },
-            "fiscal_period": {
-                "type": "number",
-                "description": (
-                    "The fiscal period. ",
-                    "If this optional parameter is provided than fiscal_year is required. "
-                    "Valid values: 2-12 (2=November ... 12=September). "
-                    "For retrieving quarterly data, provide the period which equals "
-                    "quarter * 3 (e.g Q2=P6). "
-                    "If neither parameter is provided, than the entire available history "
-                    "will be returned.",
-                ),
-            },
+input_schema = {
+    "type": "object",
+    "required": [],
+    "properties": {
+        "fiscal_year": {
+            "type": "number",
+            "description": "The fiscal year to retrieve, 2017 or later",
+        },
+        "fiscal_period": {
+            "type": "number",
+            "description": (
+                "The fiscal period. "
+                "If this optional parameter is provided than fiscal_year is required. "
+                "Valid values: 2-12 (2=November ... 12=September). "
+                "For retrieving quarterly data, provide the period which equals "
+                "quarter * 3 (e.g Q2=P6). "
+                "If neither parameter is provided, than the entire available history "
+                "will be returned."
+            ),
         },
     },
-)
+}
 
 output_schema = {
     "type": "object",
@@ -67,6 +61,14 @@ output_schema = {
         },
     },
 }
+
+tool_total_budgetary_resources = Tool(
+    name="total_budgetary_resources",
+    description=(
+        "This is used to provide information on the federal budgetary resources of the government"
+    ),
+    inputSchema=input_schema,
+)
 
 
 async def call_tool_total_budgetary_resources(arguments: dict[str, Any]):
@@ -103,7 +105,7 @@ async def call_tool_total_budgetary_resources(arguments: dict[str, Any]):
     if fiscal_period is not None:
         params["fiscal_period"] = fiscal_period
 
-    endpoint = "/api/v2/references/total_budgetary_resources/"
+    endpoint = "/api/v2/references/total_budgetary_resources/?"
     get_client = HttpClient(
         endpoint=endpoint, method="GET", params=params, output_schema=output_schema
     )

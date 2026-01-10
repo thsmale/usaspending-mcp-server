@@ -19,7 +19,8 @@ input_schema = {
             "type": "number",
             "description": (
                 "The unique USAspending.gov agency identifier. "
-                "This ID is the agency_id value returned in the toptier_agencies tool"
+                "This ID is the agency_id value returned in the toptier_agencies tool "
+                "i.e 1137."
             ),
         },
     },
@@ -87,7 +88,7 @@ async def call_tool_major_object_class(arguments: dict[str, Any]):
         "funding_agency_id": funding_agency_id,
     }
 
-    endpoint = "/api/v2/financial_spending/major_object_class/"
+    endpoint = "/api/v2/financial_spending/major_object_class/?"
     get_client = HttpClient(
         endpoint=endpoint, method="GET", params=params, output_schema=output_schema
     )

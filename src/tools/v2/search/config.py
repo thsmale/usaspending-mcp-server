@@ -46,7 +46,9 @@ object_award_types = [
 
 filter_object_award_types = {
     "type": "array",
-    "default": object_award_types,
+    # Default value provides everything, however, I was getting 422 errors often
+    # with message award_type_codes must only contain types from one group
+    "default": ["02", "03", "04", "05"],
     "items": {
         "type": "string",
         "enum": object_award_types,
@@ -256,7 +258,7 @@ advanced_filter_object = {
         "description": {"type": "string"},
         "time_period": time_period_object,
         "place_of_performance_scope": {"type": "string", "enum": ["domestic", "foreign"]},
-        "agencies": agency_object,
+        "agencies": {"type": "array", "items": agency_object},
         "recipient_search_text": {
             "type": "array",
             "items": {"type": "string"},

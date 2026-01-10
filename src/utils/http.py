@@ -1,7 +1,7 @@
 import urllib.parse
 
 from httpx import AsyncClient, Request, Response
-from jsonschema import validate
+from jsonschema import ValidationError, validate
 from mcp.shared.exceptions import McpError
 from mcp.types import (
     INTERNAL_ERROR,
@@ -46,6 +46,11 @@ class HttpClient:
             payload = response.json()
             validate(instance=payload, schema=self.output_schema)
             return True
+        except ValidationError as e:
+            print(
+                "A validation error occurred in validate_response. "
+                f"{e.message} in path {e.relative_schema_path}."
+            )
         except Exception as e:
             print(
                 "Warning the response did not contain the expected information. "
