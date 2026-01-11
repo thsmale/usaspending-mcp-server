@@ -140,6 +140,7 @@ tool_federal_accounts = Tool(
         "and budgetary resources"
     ),
     inputSchema=input_schema,
+    title="Federal Accounts",
 )
 
 

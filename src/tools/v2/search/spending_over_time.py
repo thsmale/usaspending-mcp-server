@@ -115,6 +115,7 @@ tool_spending_over_time = Tool(
         "in ascending order (earliest to most recent)"
     ),
     inputSchema=input_schema,
+    title="Spending Over Time",
 )
 
 

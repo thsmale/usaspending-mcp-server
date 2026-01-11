@@ -27,6 +27,7 @@ tool_list_budget_functions = Tool(
     name="list_budget_functions",
     description="This retrieves a list of all Budget Functions ordered by their title",
     inputSchema=input_schema,
+    title="List Budget Functions",
 )
 
 

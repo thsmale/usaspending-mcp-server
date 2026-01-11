@@ -104,6 +104,7 @@ tool_toptier_agencies = Tool(
         "that a specific agency spends money"
     ),
     inputSchema=input_schema,
+    title="Toptier Agency Profile",
 )
 
 

@@ -59,6 +59,7 @@ tool_major_object_class = Tool(
         "that a specific agency spends money"
     ),
     inputSchema=input_schema,
+    title="Major Object Classes",
 )
 
 

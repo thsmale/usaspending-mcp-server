@@ -109,6 +109,7 @@ tool_spending = Tool(
         "Provide either a quarter or a period."
     ),
     inputSchema=input_schema,
+    title="Spending Explorer",
 )
 
 

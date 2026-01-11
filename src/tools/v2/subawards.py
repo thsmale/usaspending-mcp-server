@@ -83,6 +83,7 @@ tool_subawards = Tool(
     name="subawards",
     description="This returns a filtered set of subawards",
     inputSchema=input_schema,
+    title="Subawards",
 )
 
 

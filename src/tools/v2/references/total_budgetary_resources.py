@@ -71,6 +71,7 @@ tool_total_budgetary_resources = Tool(
         "This is used to provide information on the federal budgetary resources of the government"
     ),
     inputSchema=input_schema,
+    title="Total Government Budgetary Resources",
 )
 
 

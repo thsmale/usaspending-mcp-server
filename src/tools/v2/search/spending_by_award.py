@@ -252,6 +252,7 @@ tool_spending_by_award = Tool(
         "This accepts filters and fields, and returns the fields of the filtered awards."
     ),
     inputSchema=input_schema,
+    title="Spending by Award",
 )
 
 

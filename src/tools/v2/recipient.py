@@ -103,6 +103,7 @@ tool_recipient = Tool(
         "This returns a list of recipients, their level, DUNS, UEI, and amount."
     ),
     inputSchema=input_schema,
+    title="Recipient",
 )
 
 
