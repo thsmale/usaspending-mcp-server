@@ -7,6 +7,7 @@ from utils.http import HttpClient
 input_schema = {
     "type": "object",
     "required": [],
+    "additionalProperties": False,
     "properties": {
         "sort": {
             "type": "string",
@@ -22,7 +23,7 @@ input_schema = {
                 "current_total_budget_authority_amount",
                 "percentage_of_total_budget_authority",
             ],
-            # "default": "percentage_of_total_budget_authority",
+            "default": "percentage_of_total_budget_authority",
         },
         "order": {
             "type": "string",

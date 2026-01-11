@@ -108,6 +108,7 @@ spending_by_award_response_properties = [
 input_schema = {
     "type": "object",
     "required": ["filters", "fields"],
+    "additionalProperties": False,
     "properties": {
         "filters": award_advanced_filter_object,
         "fields": spending_by_award_fields,

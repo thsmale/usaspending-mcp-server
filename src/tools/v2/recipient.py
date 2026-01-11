@@ -7,6 +7,7 @@ from utils.http import HttpClient
 input_schema = {
     "type": "object",
     "required": [],
+    "additionalProperties": False,
     "properties": {
         "order": {"type": "string", "enum": ["asc", "desc"], "default": "desc"},
         "sort": {"type": "string", "enum": ["name", "duns", "amount"], "default": "amount"},

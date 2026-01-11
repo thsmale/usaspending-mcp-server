@@ -1,6 +1,7 @@
 agency_object = {
     "type": "object",
     "required": ["type", "tier", "name"],
+    "additionalProperties": False,
     "properties": {
         "type": {"type": "string", "enum": ["awarding", "funding"]},
         "tier": {"type": "string", "enum": ["toptier", "subtier"]},
@@ -61,6 +62,7 @@ standard_location_object = {
     "items": {
         "type": "object",
         "required": ["country"],
+        "additionalProperties": False,
         "properties": {
             "country": {
                 "type": "string",
@@ -143,6 +145,7 @@ time_period_object = {
                 "type": "object",
                 "title": "SubawardSearchTimePeriodObject",
                 "required": ["start_date", "end_date"],
+                "additionalProperties": False,
                 "description": "Use this if spending_level is subawards or subawards is true",
                 "properties": {
                     "start_date": {
@@ -170,6 +173,7 @@ time_period_object = {
                 "type": "object",
                 "title": "TransactionSearchTimePeriodObject",
                 "required": ["start_date", "end_date"],
+                "additionalProperties": False,
                 "properties": {
                     "start_date": {
                         "type": "string",
@@ -205,6 +209,7 @@ treasury_account_components = {
     "items": {
         "type": "object",
         "required": ["aid", "main"],
+        "additionalProperties": False,
         "properties": {
             "ata": {
                 "type": ["string", "null"],
@@ -249,6 +254,7 @@ treasury_account_components = {
 
 advanced_filter_object = {
     "type": "object",
+    "additionalProperties": False,
     "properties": {
         "keywords": {
             "type": "array",
@@ -291,6 +297,7 @@ advanced_filter_object = {
             "type": "array",
             "items": {
                 "type": "object",
+                "additionalProperties": False,
                 "properties": {
                     "lower_bound": {"type": "number"},
                     "upper_bound": {"type": "number"},
@@ -305,6 +312,7 @@ advanced_filter_object = {
         },
         "naics_codes": {
             "type": "object",
+            "additionalProperties": False,
             "properties": {
                 "require": {"type": "array", "items": {"type": "string"}},
                 "exclude": {"type": "array", "items": {"type": "string"}},
@@ -313,6 +321,7 @@ advanced_filter_object = {
         },
         "tas_codes": {
             "type": "object",
+            "additionalProperties": False,
             "properties": {
                 "require": {
                     "type": "array",
@@ -329,6 +338,7 @@ advanced_filter_object = {
             "type": "array",
             "items": {
                 "type": "object",
+                "additionalProperties": False,
                 "properties": {
                     "require": {
                         "type": "array",
@@ -370,6 +380,7 @@ advanced_filter_object = {
             ),
             "items": {
                 "type": "object",
+                "additionalProperties": False,
                 "properties": {
                     "name": {"type": "string"},
                     "code": {"type": "string"},

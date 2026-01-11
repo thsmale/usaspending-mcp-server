@@ -13,6 +13,7 @@ output_schema = {
             "items": {
                 "type": "object",
                 "required": ["budget_function_code", "budget_function_title"],
+                "additionalProperties": False,
                 "properties": {
                     "budget_function_code": {"type": "string"},
                     "budget_function_title": {"type": "string"},

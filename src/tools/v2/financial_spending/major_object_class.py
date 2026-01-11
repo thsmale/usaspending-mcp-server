@@ -9,6 +9,7 @@ from utils.http import HttpClient
 input_schema = {
     "type": "object",
     "required": ["fiscal_year", "funding_agency_id"],
+    "additionalProperties": False,
     "properties": {
         "fiscal_year": {
             "type": "number",

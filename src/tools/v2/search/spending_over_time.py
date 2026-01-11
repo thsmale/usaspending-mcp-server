@@ -9,6 +9,7 @@ from utils.http import HttpClient
 input_schema = {
     "type": "object",
     "required": ["group", "filters"],
+    "additionalProperties": False,
     "properties": {
         "group": {
             "type": "string",

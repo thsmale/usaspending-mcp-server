@@ -8,6 +8,7 @@ from utils.http import HttpClient
 input_schema = {
     "type": "object",
     "required": ["page", "sort", "order"],
+    "additionalProperties": False,
     "properties": {
         "page": {"type": "number", "default": 1},
         "limit": {"type": "number", "default": 10},

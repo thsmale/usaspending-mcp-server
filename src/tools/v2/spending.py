@@ -9,6 +9,7 @@ from utils.http import HttpClient
 input_schema = {
     "type": "object",
     "required": ["type", "filters"],
+    "additionalProperties": False,
     "properties": {
         "type": {
             "type": "string",
@@ -29,6 +30,7 @@ input_schema = {
                 {"required": ["fy", "quarter"]},
                 {"required": ["fy", "period"]},
             ],
+            "additionalProperties": False,
             "properties": {
                 "fy": {
                     "type": "string",

@@ -7,10 +7,12 @@ from utils.http import HttpClient
 input_schema = {
     "type": "object",
     "required": [],
+    "additionalProperties": False,
     "properties": {
         "filters": {
             "type": "object",
             "required": [],
+            "additionalProperties": False,
             "properties": {
                 "fy": {
                     "type": "string",
@@ -32,6 +34,7 @@ input_schema = {
         "sort": {
             "type": "object",
             "required": [],
+            "additionalProperties": False,
             "properties": {
                 "direction": {
                     "type": "string",
