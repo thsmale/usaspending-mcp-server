@@ -147,9 +147,11 @@ class TestSpendingByAward(Validation):
     @patch(
         "utils.http.client.send",
     )
-    async def successful_tool_call(self, mock_send):
+    async def test_successful_tool_call(self, mock_send):
         mock_send.return_value = Response(status_code=200, json={})
-        res = await call_tool_spending_by_award({"filters": {}, "fields": []})
+        res = await call_tool_spending_by_award(
+            {"filters": { "prop": "val" }, "fields": []}
+        )
         mock_send.assert_called_once()
         self.validate_text_content(res, text="{}")
 
@@ -173,9 +175,11 @@ class TestSpendingOverTime(Validation):
     @patch(
         "utils.http.client.send",
     )
-    async def successful_tool_call(self, mock_send):
+    async def test_successful_tool_call(self, mock_send):
         mock_send.return_value = Response(status_code=200, json={})
-        res = await call_tool_spending_over_time({"group": "test", "filters": {}})
+        res = await call_tool_spending_over_time(
+            {"group": "test", "filters": { "prop": "val" }}
+        )
         mock_send.assert_called_once()
         self.validate_text_content(res, text="{}")
 
