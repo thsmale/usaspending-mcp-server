@@ -8,12 +8,23 @@ import mcp.types as types
 import uvicorn
 from dotenv import load_dotenv
 from mcp.server.lowlevel import Server
+from mcp.server.lowlevel.helper_types import ReadResourceContents
 from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
+from pydantic import AnyUrl
 from starlette.applications import Starlette
 from starlette.middleware.cors import CORSMiddleware
 from starlette.routing import Mount
 from starlette.types import Receive, Scope, Send
 
+from prompts.award_type_codes import (
+    prompt_award_type_codes_guide,
+    prompt_message_award_type_codes_guide,
+)
+from resources.award_type_codes import (
+    award_type_groups,
+    resource_award_type_codes,
+    resource_name,
+)
 from tools.config import (
     # Tool handlers
     call_tool_federal_accounts,
@@ -102,6 +113,46 @@ async def list_tools() -> list[types.Tool]:
         tool_total_budgetary_resources,
         tool_toptier_agencies,
     ]
+
+
+@app.list_prompts()
+async def list_prompts() -> list[types.Prompt]:
+    return [prompt_award_type_codes_guide]
+
+
+@app.get_prompt()
+async def get_prompt(name: str, arguments: dict[str, str] | None = None) -> types.GetPromptResult:
+    if name != "award_type_codes_guide":
+        # Please choose from the following... return enum
+        raise ValueError(f"Unknown prompt: {name}")
+
+    if arguments is None:
+        arguments = {}
+
+    return types.GetPromptResult(
+        messages=prompt_message_award_type_codes_guide(),
+        description="A Guide to using award_type_codes.",
+    )
+
+
+@app.list_resources()
+async def list_resources() -> list[types.Resource]:
+    return [
+        resource_award_type_codes,
+    ]
+
+
+@app.read_resource()
+async def read_resource(uri: AnyUrl):
+    if uri.path is None:
+        raise ValueError(f"Invalid resource path: {uri}")
+    name = uri.path.replace(".txt", "").lstrip("/")
+
+    if name != resource_name:
+        # Valid resources are...
+        raise ValueError(f"Unknown resource: {uri}")
+
+    return [ReadResourceContents(content=f"{award_type_groups}", mime_type="text/plain")]
 
 
 # Create the session manager with true stateless mode

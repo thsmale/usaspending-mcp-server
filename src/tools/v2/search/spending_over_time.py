@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import Any
 
 from mcp.shared.exceptions import McpError
@@ -5,6 +6,9 @@ from mcp.types import INVALID_PARAMS, ErrorData, Tool
 
 from tools.v2.search.config import advanced_filter_object
 from utils.http import HttpClient
+
+award_advanced_filter_object = deepcopy(advanced_filter_object)
+award_advanced_filter_object["minProperties"] = 1
 
 input_schema = {
     "type": "object",
