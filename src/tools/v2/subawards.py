@@ -22,6 +22,7 @@ input_schema = {
                 "amount",
                 "recipient_name",
             ],
+            "default": "amount",
         },
         "order": {"type": "string", "enum": ["asc", "desc"], "default": "desc"},
         "award_id": {
