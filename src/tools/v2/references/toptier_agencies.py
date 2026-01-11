@@ -37,6 +37,7 @@ input_schema = {
 output_schema = {
     "type": "object",
     "required": ["results"],
+    "additionalProperties": False,
     "properties": {
         "results": {
             "type": "array",
@@ -57,6 +58,7 @@ output_schema = {
                     "toptier_code",
                     "agency_slug",
                 ],
+                "additionalProperties": False,
                 "properties": {
                     "abbreviation": {"type": "string"},
                     "active_fq": {"type": "string"},

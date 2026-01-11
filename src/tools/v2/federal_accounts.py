@@ -83,6 +83,7 @@ output_schema = {
         "fy",
         "results",
     ],
+    "additionalProperties": False,
     "properties": {
         "previous": {"type": ["number", "null"]},
         "count": {"type": "number"},
@@ -105,6 +106,7 @@ output_schema = {
                     "budgetary_resources",
                     "managing_agency",
                 ],
+                "additionalProperties": False,
                 "properties": {
                     "account_name": {
                         "type": ["string", "null"],

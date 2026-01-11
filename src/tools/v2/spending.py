@@ -73,6 +73,7 @@ input_schema = {
 output_schema = {
     "type": "object",
     "required": ["total", "end_date", "results"],
+    "additionalProperties": False,
     "properties": {
         "total": {"type": ["number", "null"]},
         "end_date": {"type": "string"},
@@ -81,6 +82,7 @@ output_schema = {
             "items": {
                 "type": "object",
                 "required": ["code", "id", "type", "name", "amount"],
+                "additionalProperties": False,
                 "properties": {
                     "code": {"type": "string"},
                     "id": {"type": "string"},

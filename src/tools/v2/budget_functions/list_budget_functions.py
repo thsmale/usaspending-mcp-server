@@ -2,7 +2,7 @@ from mcp.types import Tool
 
 from utils.http import HttpClient
 
-input_schema = {"type": "object", "properties": {}}
+input_schema = {"type": "object", "additionalProperties": False, "properties": {}}
 
 output_schema = {
     "type": "object",

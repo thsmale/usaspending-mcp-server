@@ -30,6 +30,7 @@ input_schema = {
 output_schema = {
     "type": "object",
     "required": ["results"],
+    "additionalProperties": False,
     "properties": {
         "results": {
             "type": "array",
@@ -40,6 +41,7 @@ output_schema = {
                     "major_object_class_name",
                     "obligated_amount",
                 ],
+                "additionalProperties": False,
                 "properties": {
                     "major_object_class_code": {"type": "string"},
                     "major_object_class_name": {"type": "string"},

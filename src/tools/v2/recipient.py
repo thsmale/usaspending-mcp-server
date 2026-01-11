@@ -36,10 +36,12 @@ input_schema = {
 output_schema = {
     "type": "object",
     "required": [],
+    "additionalProperties": False,
     "properties": {
         "page_metadata": {
             "type": "object",
             "required": ["page", "limit", "total"],
+            "additionalProperties": False,
             "properties": {
                 "page": {"type": "number"},
                 "limit": {"type": "number"},
@@ -51,6 +53,7 @@ output_schema = {
             "items": {
                 "type": "object",
                 "required": ["name", "duns", "uei", "id", "recipient_level"],
+                "additionalProperties": False,
                 "properties": {
                     "name": {
                         "type": ["string", "null"],

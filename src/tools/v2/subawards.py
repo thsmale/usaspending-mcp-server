@@ -38,6 +38,7 @@ input_schema = {
 output_schema = {
     "type": "object",
     "required": ["results", "page_metadata"],
+    "additionalProperties": False,
     "properties": {
         "results": {
             "type": "array",
@@ -51,6 +52,7 @@ output_schema = {
                     "amount",
                     "recipient_name",
                 ],
+                "additionalProperties": False,
                 "properties": {
                     "id": {"type": "number"},
                     "subaward_number": {"type": "string"},
@@ -64,6 +66,7 @@ output_schema = {
         "page_metadata": {
             "type": "object",
             "required": ["page", "next", "previous", "hasNext", "hasPrevious"],
+            "additionalProperties": False,
             "properties": {
                 "page": {"type": "number"},
                 "next": {"type": ["number", "null"]},

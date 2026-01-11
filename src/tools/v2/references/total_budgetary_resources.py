@@ -31,6 +31,7 @@ input_schema = {
 
 output_schema = {
     "type": "object",
+    "additionalProperties": False,
     "properties": {
         "messages": {
             "type": "array",
@@ -49,6 +50,7 @@ output_schema = {
                     "fiscal_period",
                     "total_budgetary_resources",
                 ],
+                "additionalProperties": False,
                 "properties": {
                     "fiscal_year": {
                         "type": "number",

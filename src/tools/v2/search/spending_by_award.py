@@ -149,6 +149,7 @@ input_schema = {
 output_schema = {
     "type": "object",
     "required": ["spending_level", "limit", "results"],
+    "additionalProperties": False,
     "properties": {
         "spending_level": {
             "type": "string",
@@ -160,6 +161,7 @@ output_schema = {
             "items": {
                 "type": "object",
                 "required": ["internal_id"],
+                "additionalProperties": False,
                 "properties": {
                     "internal_id": {"type": "number"},
                     "Award Amount": {"type": "number"},
@@ -219,6 +221,7 @@ output_schema = {
         "page_metadata": {
             "type": "object",
             "required": ["page", "hasNext"],
+            "additionalProperties": False,
             "properties": {
                 "page": {"type": "number"},
                 "hasNext": {"type": "boolean"},
