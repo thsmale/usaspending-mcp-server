@@ -16,15 +16,24 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.routing import Mount
 from starlette.types import Receive, Scope, Send
 
+# Import prompts
 from prompts.award_type_codes import (
     prompt_award_type_codes_guide,
     prompt_message_award_type_codes_guide,
 )
+from prompts.general_guidance import (
+    prompt_general_guidance,
+    prompt_message_general_guidance,
+)
+
+# Import resources
 from resources.award_type_codes import (
     award_type_groups,
     resource_award_type_codes,
     resource_name,
 )
+
+# Import tools
 from tools.config import (
     # Tool handlers
     call_tool_federal_accounts,
@@ -117,22 +126,26 @@ async def list_tools() -> list[types.Tool]:
 
 @app.list_prompts()
 async def list_prompts() -> list[types.Prompt]:
-    return [prompt_award_type_codes_guide]
+    return [prompt_award_type_codes_guide, prompt_general_guidance]
 
 
 @app.get_prompt()
 async def get_prompt(name: str, arguments: dict[str, str] | None = None) -> types.GetPromptResult:
-    if name != "award_type_codes_guide":
-        # Please choose from the following... return enum
-        raise ValueError(f"Unknown prompt: {name}")
+    valid_prompt_names = ["award_type_codes_guide", "general_guidance"]
+    if name not in valid_prompt_names:
+        raise ValueError(f"Unknown prompt: {name}. Valid prompt names are {valid_prompt_names}.")
 
-    if arguments is None:
-        arguments = {}
+    if name == "award_type_codes_guide":
+        return types.GetPromptResult(
+            messages=prompt_message_award_type_codes_guide(),
+            description="A Guide to using award_type_codes.",
+        )
 
-    return types.GetPromptResult(
-        messages=prompt_message_award_type_codes_guide(),
-        description="A Guide to using award_type_codes.",
-    )
+    if name == "general_guidance":
+        return types.GetPromptResult(
+            messages=prompt_message_general_guidance(),
+            description="A general guide to using the USA spending MCP server.",
+        )
 
 
 @app.list_resources()
