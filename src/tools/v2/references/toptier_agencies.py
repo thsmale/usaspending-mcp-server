@@ -7,6 +7,7 @@ from utils.http import HttpClient
 input_schema = {
     "type": "object",
     "required": [],
+    "additionalProperties": False,
     "properties": {
         "sort": {
             "type": "string",
@@ -22,7 +23,7 @@ input_schema = {
                 "current_total_budget_authority_amount",
                 "percentage_of_total_budget_authority",
             ],
-            # "default": "percentage_of_total_budget_authority",
+            "default": "percentage_of_total_budget_authority",
         },
         "order": {
             "type": "string",
@@ -36,6 +37,7 @@ input_schema = {
 output_schema = {
     "type": "object",
     "required": ["results"],
+    "additionalProperties": False,
     "properties": {
         "results": {
             "type": "array",
@@ -56,6 +58,7 @@ output_schema = {
                     "toptier_code",
                     "agency_slug",
                 ],
+                "additionalProperties": False,
                 "properties": {
                     "abbreviation": {"type": "string"},
                     "active_fq": {"type": "string"},
@@ -101,6 +104,7 @@ tool_toptier_agencies = Tool(
         "that a specific agency spends money"
     ),
     inputSchema=input_schema,
+    title="Toptier Agency Profile",
 )
 
 

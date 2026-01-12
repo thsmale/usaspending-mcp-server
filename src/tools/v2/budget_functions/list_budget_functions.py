@@ -2,7 +2,7 @@ from mcp.types import Tool
 
 from utils.http import HttpClient
 
-input_schema = {"type": "object", "properties": {}}
+input_schema = {"type": "object", "additionalProperties": False}
 
 output_schema = {
     "type": "object",
@@ -13,6 +13,7 @@ output_schema = {
             "items": {
                 "type": "object",
                 "required": ["budget_function_code", "budget_function_title"],
+                "additionalProperties": False,
                 "properties": {
                     "budget_function_code": {"type": "string"},
                     "budget_function_title": {"type": "string"},
@@ -26,6 +27,7 @@ tool_list_budget_functions = Tool(
     name="list_budget_functions",
     description="This retrieves a list of all Budget Functions ordered by their title",
     inputSchema=input_schema,
+    title="List Budget Functions",
 )
 
 

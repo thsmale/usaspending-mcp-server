@@ -7,6 +7,7 @@ from utils.http import HttpClient
 input_schema = {
     "type": "object",
     "required": [],
+    "additionalProperties": False,
     "properties": {
         "order": {"type": "string", "enum": ["asc", "desc"], "default": "desc"},
         "sort": {"type": "string", "enum": ["name", "duns", "amount"], "default": "amount"},
@@ -35,10 +36,12 @@ input_schema = {
 output_schema = {
     "type": "object",
     "required": [],
+    "additionalProperties": False,
     "properties": {
         "page_metadata": {
             "type": "object",
             "required": ["page", "limit", "total"],
+            "additionalProperties": False,
             "properties": {
                 "page": {"type": "number"},
                 "limit": {"type": "number"},
@@ -50,6 +53,7 @@ output_schema = {
             "items": {
                 "type": "object",
                 "required": ["name", "duns", "uei", "id", "recipient_level"],
+                "additionalProperties": False,
                 "properties": {
                     "name": {
                         "type": ["string", "null"],
@@ -99,6 +103,7 @@ tool_recipient = Tool(
         "This returns a list of recipients, their level, DUNS, UEI, and amount."
     ),
     inputSchema=input_schema,
+    title="Recipient",
 )
 
 

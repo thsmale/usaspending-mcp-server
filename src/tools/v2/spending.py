@@ -9,6 +9,7 @@ from utils.http import HttpClient
 input_schema = {
     "type": "object",
     "required": ["type", "filters"],
+    "additionalProperties": False,
     "properties": {
         "type": {
             "type": "string",
@@ -29,6 +30,7 @@ input_schema = {
                 {"required": ["fy", "quarter"]},
                 {"required": ["fy", "period"]},
             ],
+            "additionalProperties": False,
             "properties": {
                 "fy": {
                     "type": "string",
@@ -71,6 +73,7 @@ input_schema = {
 output_schema = {
     "type": "object",
     "required": ["total", "end_date", "results"],
+    "additionalProperties": False,
     "properties": {
         "total": {"type": ["number", "null"]},
         "end_date": {"type": "string"},
@@ -79,6 +82,7 @@ output_schema = {
             "items": {
                 "type": "object",
                 "required": ["code", "id", "type", "name", "amount"],
+                "additionalProperties": False,
                 "properties": {
                     "code": {"type": "string"},
                     "id": {"type": "string"},
@@ -105,6 +109,7 @@ tool_spending = Tool(
         "Provide either a quarter or a period."
     ),
     inputSchema=input_schema,
+    title="Spending Explorer",
 )
 
 

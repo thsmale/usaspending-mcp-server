@@ -7,10 +7,12 @@ from utils.http import HttpClient
 input_schema = {
     "type": "object",
     "required": [],
+    "additionalProperties": False,
     "properties": {
         "filters": {
             "type": "object",
             "required": [],
+            "additionalProperties": False,
             "properties": {
                 "fy": {
                     "type": "string",
@@ -32,6 +34,7 @@ input_schema = {
         "sort": {
             "type": "object",
             "required": [],
+            "additionalProperties": False,
             "properties": {
                 "direction": {
                     "type": "string",
@@ -80,6 +83,7 @@ output_schema = {
         "fy",
         "results",
     ],
+    "additionalProperties": False,
     "properties": {
         "previous": {"type": ["number", "null"]},
         "count": {"type": "number"},
@@ -102,6 +106,7 @@ output_schema = {
                     "budgetary_resources",
                     "managing_agency",
                 ],
+                "additionalProperties": False,
                 "properties": {
                     "account_name": {
                         "type": ["string", "null"],
@@ -135,6 +140,7 @@ tool_federal_accounts = Tool(
         "and budgetary resources"
     ),
     inputSchema=input_schema,
+    title="Federal Accounts",
 )
 
 

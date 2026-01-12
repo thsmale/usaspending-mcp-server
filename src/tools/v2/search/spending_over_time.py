@@ -9,6 +9,7 @@ from utils.http import HttpClient
 input_schema = {
     "type": "object",
     "required": ["group", "filters"],
+    "additionalProperties": False,
     "properties": {
         "group": {
             "type": "string",
@@ -36,6 +37,7 @@ input_schema = {
 output_schema = {
     "type": "object",
     "required": ["group", "spending_level", "results", "messages"],
+    "additionalProperties": False,
     "properties": {
         "group": {
             "type": "string",
@@ -66,9 +68,11 @@ output_schema = {
                     "Direct_Outlays",
                     "Other_Outlays",
                 ],
+                "additionalProperties": False,
                 "properties": {
                     "time_period": {
                         "type": "object",
+                        "additionalProperties": False,
                         "properties": {
                             "calendar_year": {"type": "string"},
                             "fiscal_year": {"type": "string"},
@@ -111,6 +115,7 @@ tool_spending_over_time = Tool(
         "in ascending order (earliest to most recent)"
     ),
     inputSchema=input_schema,
+    title="Spending Over Time",
 )
 
 

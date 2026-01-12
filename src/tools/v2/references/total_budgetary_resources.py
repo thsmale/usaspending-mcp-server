@@ -8,6 +8,7 @@ from utils.http import HttpClient
 input_schema = {
     "type": "object",
     "required": [],
+    "additionalProperties": False,
     "properties": {
         "fiscal_year": {
             "type": "number",
@@ -30,6 +31,7 @@ input_schema = {
 
 output_schema = {
     "type": "object",
+    "additionalProperties": False,
     "properties": {
         "messages": {
             "type": "array",
@@ -48,6 +50,7 @@ output_schema = {
                     "fiscal_period",
                     "total_budgetary_resources",
                 ],
+                "additionalProperties": False,
                 "properties": {
                     "fiscal_year": {
                         "type": "number",
@@ -68,6 +71,7 @@ tool_total_budgetary_resources = Tool(
         "This is used to provide information on the federal budgetary resources of the government"
     ),
     inputSchema=input_schema,
+    title="Total Government Budgetary Resources",
 )
 
 

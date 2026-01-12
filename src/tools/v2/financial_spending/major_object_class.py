@@ -9,6 +9,7 @@ from utils.http import HttpClient
 input_schema = {
     "type": "object",
     "required": ["fiscal_year", "funding_agency_id"],
+    "additionalProperties": False,
     "properties": {
         "fiscal_year": {
             "type": "number",
@@ -29,6 +30,7 @@ input_schema = {
 output_schema = {
     "type": "object",
     "required": ["results"],
+    "additionalProperties": False,
     "properties": {
         "results": {
             "type": "array",
@@ -39,6 +41,7 @@ output_schema = {
                     "major_object_class_name",
                     "obligated_amount",
                 ],
+                "additionalProperties": False,
                 "properties": {
                     "major_object_class_code": {"type": "string"},
                     "major_object_class_name": {"type": "string"},
@@ -56,6 +59,7 @@ tool_major_object_class = Tool(
         "that a specific agency spends money"
     ),
     inputSchema=input_schema,
+    title="Major Object Classes",
 )
 
 
