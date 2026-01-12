@@ -3,44 +3,43 @@ from typing import Any
 from mcp.shared.exceptions import McpError
 from mcp.types import INVALID_PARAMS, ErrorData, Tool
 
-from utils.http import PostClient
+from utils.http import HttpClient
 
-tool_subawards = Tool(
-    name="subawards",
-    description="This returns a filtered set of subawards",
-    inputSchema={
-        "type": "object",
-        "required": ["page", "sort", "order"],
-        "properties": {
-            "page": {"type": "number", "default": 1},
-            "limit": {"type": "number", "default": 10},
-            "sort": {
-                "type": "string",
-                "enum": [
-                    "subaward_number",
-                    "id",
-                    "description",
-                    "action_date",
-                    "amount",
-                    "recipient_name",
-                ],
-            },
-            "order": {"type": "string", "enum": ["asc", "desc"], "default": "desc"},
-            "award_id": {
-                "type": "string",
-                "description": (
-                    "Either a generated natural award id or a database surrogate award id. "
-                    "Generated award identifiers are preferred as they are effectively permanent. "
-                    "Surrogate award ids retained for backward compatibility but are deprecated."
-                ),
-            },
+input_schema = {
+    "type": "object",
+    "required": ["page", "sort", "order"],
+    "additionalProperties": False,
+    "properties": {
+        "page": {"type": "number", "default": 1},
+        "limit": {"type": "number", "default": 10},
+        "sort": {
+            "type": "string",
+            "enum": [
+                "subaward_number",
+                "id",
+                "description",
+                "action_date",
+                "amount",
+                "recipient_name",
+            ],
+            "default": "amount",
+        },
+        "order": {"type": "string", "enum": ["asc", "desc"], "default": "desc"},
+        "award_id": {
+            "type": "string",
+            "description": (
+                "Either a generated natural award id or a database surrogate award id. "
+                "Generated award identifiers are preferred as they are effectively permanent. "
+                "Surrogate award ids retained for backward compatibility but are deprecated."
+            ),
         },
     },
-)
+}
 
-response_schema = {
+output_schema = {
     "type": "object",
     "required": ["results", "page_metadata"],
+    "additionalProperties": False,
     "properties": {
         "results": {
             "type": "array",
@@ -54,6 +53,7 @@ response_schema = {
                     "amount",
                     "recipient_name",
                 ],
+                "additionalProperties": False,
                 "properties": {
                     "id": {"type": "number"},
                     "subaward_number": {"type": "string"},
@@ -67,6 +67,7 @@ response_schema = {
         "page_metadata": {
             "type": "object",
             "required": ["page", "next", "previous", "hasNext", "hasPrevious"],
+            "additionalProperties": False,
             "properties": {
                 "page": {"type": "number"},
                 "next": {"type": ["number", "null"]},
@@ -77,6 +78,13 @@ response_schema = {
         },
     },
 }
+
+tool_subawards = Tool(
+    name="subawards",
+    description="This returns a filtered set of subawards",
+    inputSchema=input_schema,
+    title="Subawards",
+)
 
 
 async def call_tool_subawards(arguments: dict[str, Any]):
@@ -91,7 +99,7 @@ async def call_tool_subawards(arguments: dict[str, Any]):
         raise McpError(
             ErrorData(
                 code=INVALID_PARAMS,
-                message="page is a required argument",
+                message="page must be provided.",
             )
         )
 
@@ -99,7 +107,7 @@ async def call_tool_subawards(arguments: dict[str, Any]):
         raise McpError(
             ErrorData(
                 code=INVALID_PARAMS,
-                message="sort is a required argument",
+                message="sort must be provided.",
             )
         )
 
@@ -107,7 +115,7 @@ async def call_tool_subawards(arguments: dict[str, Any]):
         raise McpError(
             ErrorData(
                 code=INVALID_PARAMS,
-                message="order is a required argument",
+                message="order must be provided.",
             )
         )
 
@@ -123,5 +131,10 @@ async def call_tool_subawards(arguments: dict[str, Any]):
     if award_id is not None:
         payload["award_id"] = award_id
 
-    post_client = PostClient(endpoint, payload, response_schema)
+    post_client = HttpClient(
+        endpoint=endpoint,
+        method="POST",
+        payload=payload,
+        output_schema=output_schema,
+    )
     return await post_client.send()

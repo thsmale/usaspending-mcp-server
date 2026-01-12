@@ -5,10 +5,10 @@ from mcp.shared.exceptions import McpError
 from mcp.types import INVALID_PARAMS, ErrorData, Tool
 
 from tools.v2.search.config import advanced_filter_object
-from utils.http import PostClient
+from utils.http import HttpClient
 
 award_advanced_filter_object = deepcopy(advanced_filter_object)
-award_advanced_filter_object['required'] = ['award_type_codes']
+award_advanced_filter_object["required"] = ["award_type_codes"]
 
 spending_by_award_fields_enum = [
     "Award ID",
@@ -104,63 +104,52 @@ spending_by_award_response_properties = [
     "agency_slug",
 ]
 
-"""
-We are going to take a different approach for this tool versus spending_by_geography.
-I am not adding every single filter property.
-Since I am worried a more complex input schema may overwhelm the LLM.
-Weird, initially I didn't event supply recipient_search_text.
-Regardless, the LLM still tried to use it in a query so I added it.
-"""
-tool_spending_by_award = Tool(
-    name="spending_by_award",
-    description=(
-        "This allows for complex filtering for specific subsets of spending data. "
-        "This accepts filters and fields, and returns the fields of the filtered awards."
-    ),
-    inputSchema={
-        "type": "object",
-        "required": ["filters", "fields"],
-        "properties": {
-            "filters": award_advanced_filter_object,
-            "fields": spending_by_award_fields,
-            "limit": {
-                "type": "number",
-                "description": "How many results are returned.",
-                "default": 10,
-            },
-            "order": {
-                "type": "string",
-                "enum": ["asc", "desc"],
-                "default": "desc",
-                "description": "Indicates what direction results should be sorted by.",
-            },
-            "sort": {
-                "type": "string",
-                "description": "What value the results should be sorted by.",
-                "enum": spending_by_award_response_properties,
-            },
-            "page": {"type": "string"},
-            "subawards": {
-                "type": "boolean",
-                "description": "True when you want to group by Subawards instead of Awards",
-                "default": False,
-            },
-            "spending_level": {
-                "type": "string",
-                "description": (
-                    "Group the spending by level. "
-                    "This also determines what data source is used for the totals"
-                ),
-                "enum": ["awards", "subawards"],
-                "default": "awards",
-            },
+
+input_schema = {
+    "type": "object",
+    "required": ["filters", "fields"],
+    "additionalProperties": False,
+    "properties": {
+        "filters": award_advanced_filter_object,
+        "fields": spending_by_award_fields,
+        "limit": {
+            "type": "number",
+            "description": "How many results are returned.",
+            "default": 10,
+        },
+        "order": {
+            "type": "string",
+            "enum": ["asc", "desc"],
+            "default": "desc",
+            "description": "Indicates what direction results should be sorted by.",
+        },
+        "sort": {
+            "type": "string",
+            "description": "What value the results should be sorted by.",
+            "enum": spending_by_award_response_properties,
+        },
+        "page": {"type": "string"},
+        "subawards": {
+            "type": "boolean",
+            "description": "True when you want to group by Subawards instead of Awards",
+            "default": False,
+        },
+        "spending_level": {
+            "type": "string",
+            "description": (
+                "Group the spending by level. "
+                "This also determines what data source is used for the totals"
+            ),
+            "enum": ["awards", "subawards"],
+            "default": "awards",
         },
     },
-)
+}
 
-response_schema = {
+output_schema = {
     "type": "object",
     "required": ["spending_level", "limit", "results"],
+    "additionalProperties": False,
     "properties": {
         "spending_level": {
             "type": "string",
@@ -172,6 +161,7 @@ response_schema = {
             "items": {
                 "type": "object",
                 "required": ["internal_id"],
+                "additionalProperties": False,
                 "properties": {
                     "internal_id": {"type": "number"},
                     "Award Amount": {"type": "number"},
@@ -197,9 +187,7 @@ response_schema = {
                     "Last Date to Order": {"type": ["string", "null"]},
                     "Last Modified Date": {"type": "string"},
                     "Loan Value": {"type": ["number"]},
-                    "Period of Performance Current End Date": {
-                        "type": ["string", "null"]
-                    },
+                    "Period of Performance Current End Date": {"type": ["string", "null"]},
                     "Period of Performance Start Date": {"type": "string"},
                     "Place of Performance City Code": {"type": "number"},
                     "Place of Performance Country Code": {"type": ["string", "null"]},
@@ -233,14 +221,39 @@ response_schema = {
         "page_metadata": {
             "type": "object",
             "required": ["page", "hasNext"],
+            "additionalProperties": False,
             "properties": {
                 "page": {"type": "number"},
                 "hasNext": {"type": "boolean"},
             },
         },
-        "messages": {"type": "array", "items": {"type": "string"}},
+        "messages": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": (
+                "An array of warnings or instructional directives to aid consumers "
+                "of this endpoint with development and debugging."
+            ),
+        },
     },
 }
+
+"""
+We are going to take a different approach for this tool versus spending_by_geography.
+I am not adding every single filter property.
+Since I am worried a more complex input schema may overwhelm the LLM.
+Weird, initially I didn't event supply recipient_search_text.
+Regardless, the LLM still tried to use it in a query so I added it.
+"""
+tool_spending_by_award = Tool(
+    name="spending_by_award",
+    description=(
+        "This allows for complex filtering for specific subsets of spending data. "
+        "This accepts filters and fields, and returns the fields of the filtered awards."
+    ),
+    inputSchema=input_schema,
+    title="Spending by Award",
+)
 
 
 async def call_tool_spending_by_award(arguments: dict[str, Any]):
@@ -254,11 +267,18 @@ async def call_tool_spending_by_award(arguments: dict[str, Any]):
     subawards = arguments.get("subawards")
     spending_level = arguments.get("spending_level")
 
-    if not bool(filters) or fields is None:
+    if not bool(filters):
         raise McpError(
             ErrorData(
                 code=INVALID_PARAMS,
-                message="filters and fields are required arguments",
+                message="filters must be provided.",
+            )
+        )
+    if fields is None:
+        raise McpError(
+            ErrorData(
+                code=INVALID_PARAMS,
+                message="fields must be provided.",
             )
         )
 
@@ -280,5 +300,7 @@ async def call_tool_spending_by_award(arguments: dict[str, Any]):
     if spending_level is not None:
         payload["spending_level"] = spending_level
 
-    post_client = PostClient(endpoint, payload, response_schema)
+    post_client = HttpClient(
+        endpoint=endpoint, method="POST", payload=payload, output_schema=output_schema
+    )
     return await post_client.send()

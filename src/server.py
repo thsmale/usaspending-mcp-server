@@ -50,12 +50,11 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 
-app = Server("mcp-streamable-http-stateless-demo")
+app = Server("usa-spending-mcp-server")
+
 
 @app.call_tool()
-async def call_tool(
-    name: str, arguments: dict[str, Any]
-) -> list[types.ContentBlock]:
+async def call_tool(name: str, arguments: dict[str, Any]) -> list[types.ContentBlock]:
     if name == "federal_accounts":
         return await call_tool_federal_accounts(arguments)
 
@@ -74,7 +73,7 @@ async def call_tool(
     if name == "spending_by_award":
         return await call_tool_spending_by_award(arguments)
 
-    if name == 'spending_over_time':
+    if name == "spending_over_time":
         return await call_tool_spending_over_time(arguments)
 
     if name == "subawards":
@@ -87,6 +86,7 @@ async def call_tool(
         return await call_tool_toptier_agencies(arguments)
 
     raise ValueError(f"Unknown tool: {name}")
+
 
 @app.list_tools()
 async def list_tools() -> list[types.Tool]:
@@ -103,6 +103,7 @@ async def list_tools() -> list[types.Tool]:
         tool_toptier_agencies,
     ]
 
+
 # Create the session manager with true stateless mode
 session_manager = StreamableHTTPSessionManager(
     app=app,
@@ -110,10 +111,10 @@ session_manager = StreamableHTTPSessionManager(
     stateless=True,
 )
 
-async def handle_streamable_http(
-    scope: Scope, receive: Receive, send: Send
-) -> None:
+
+async def handle_streamable_http(scope: Scope, receive: Receive, send: Send) -> None:
     await session_manager.handle_request(scope, receive, send)
+
 
 @contextlib.asynccontextmanager
 async def lifespan(app: Starlette) -> AsyncIterator[None]:
@@ -124,6 +125,7 @@ async def lifespan(app: Starlette) -> AsyncIterator[None]:
             yield
         finally:
             logger.info("Application shutting down...")
+
 
 # Create an ASGI application using the transport
 starlette_app = Starlette(
@@ -143,9 +145,11 @@ starlette_app = CORSMiddleware(
     expose_headers=["Mcp-Session-Id"],
 )
 
+
 def main():
     uvicorn.run(starlette_app, host=HOST, port=PORT)
     return 0
+
 
 if __name__ == "__main__":
     main()

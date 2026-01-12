@@ -1,10 +1,11 @@
 agency_object = {
     "type": "object",
     "required": ["type", "tier", "name"],
+    "additionalProperties": False,
     "properties": {
-        "type": { "type": "string", "enum": ["awarding", "funding"] },
-        "tier": { "type": "string", "enum": ["toptier", "subtier"] },
-        "name": { "type": "string" },
+        "type": {"type": "string", "enum": ["awarding", "funding"]},
+        "tier": {"type": "string", "enum": ["toptier", "subtier"]},
+        "name": {"type": "string", "description": "For example, Office of Inspector General."},
         "toptier_name": {
             "type": "string",
             "description": (
@@ -14,41 +15,46 @@ agency_object = {
                 "common names to a specific toptier. "
                 "For example, several agencies have an 'Office of Inspector General'. "
                 "If not provided, subtiers may span more than on toptier."
-            )
-        }
-    }
+            ),
+        },
+    },
 }
+
+object_award_types = [
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "A",
+    "B",
+    "C",
+    "D",
+    "IDV_A",
+    "IDV_B",
+    "IDV_B_A",
+    "IDV_B_B",
+    "IDV_B_C",
+    "IDV_C",
+    "IDV_D",
+    "IDV_E",
+]
 
 filter_object_award_types = {
     "type": "array",
-    "default": ["A", "B", "C", "D"],
+    # Default value provides everything, however, I was getting 422 errors often
+    # with message award_type_codes must only contain types from one group
+    "default": ["02", "03", "04", "05"],
     "items": {
         "type": "string",
-        "enum": [
-            "02",
-            "03",
-            "04",
-            "05",
-            "06",
-            "07",
-            "08",
-            "09",
-            "10",
-            "11",
-            "A",
-            "B",
-            "C",
-            "D",
-            "IDV_A",
-            "IDV_B",
-            "IDV_B_A",
-            "IDV_B_B",
-            "IDV_B_C",
-            "IDV_C",
-            "IDV_D",
-            "IDV_E",
-        ],
+        "enum": object_award_types,
     },
+    "description": "List of filterable award types. For example [A, B, C, D].",
 }
 
 standard_location_object = {
@@ -56,6 +62,7 @@ standard_location_object = {
     "items": {
         "type": "object",
         "required": ["country"],
+        "additionalProperties": False,
         "properties": {
             "country": {
                 "type": "string",
@@ -63,7 +70,7 @@ standard_location_object = {
                     "A 3 character code indicating the country to search within. "
                     "If the country code is not USA, all further parameters can be ignored. "
                     "A special country code, FOREIGN, represents all non-US countries."
-                )
+                ),
             },
             "state": {
                 "type": "string",
@@ -88,7 +95,7 @@ standard_location_object = {
                     "String city name. "
                     "If no state is provided, this will return results for all cities "
                     "in any state with the provided name."
-                )
+                ),
             },
             "district_original": {
                 "type": "string",
@@ -119,19 +126,26 @@ standard_location_object = {
                 "description": "A 5 digit string indicating the postal area to search within.",
                 "minLength": 5,
                 "maxLength": 5,
-            }
-        }
-    }
+            },
+        },
+    },
 }
 
 time_period_object = {
     "type": "array",
+    "description": (
+        "Search based on one or more fiscal year selections OR date range. "
+        "Dates should be in the following format: YYYY-MM-DD. "
+        "For example, "
+        """{"time_period": [{"start_date": "2001-01-01", "end_date": "2001-01-31"}]}"""
+    ),
     "items": {
         "anyOf": [
             {
                 "type": "object",
                 "title": "SubawardSearchTimePeriodObject",
                 "required": ["start_date", "end_date"],
+                "additionalProperties": False,
                 "description": "Use this if spending_level is subawards or subawards is true",
                 "properties": {
                     "start_date": {
@@ -159,6 +173,7 @@ time_period_object = {
                 "type": "object",
                 "title": "TransactionSearchTimePeriodObject",
                 "required": ["start_date", "end_date"],
+                "additionalProperties": False,
                 "properties": {
                     "start_date": {
                         "type": "string",
@@ -190,142 +205,188 @@ time_period_object = {
 }
 
 treasury_account_components = {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "required": ["aid", "main"],
-                "properties": {
-                    "ata": {
-                        "type": ["string", "null"],
-                        "description": "Allocation Transfer Agency Identifier - three characters.",
-                        "minLength": 3,
-                        "maxLength": 3,
-                    },
-                    "aid": {
-                        "type": "string",
-                        "description": "Agency Identifier - three characters.",
-                        "minLength": 3,
-                        "maxLength": 3,
-                    },
-                    "bpoa": {
-                        "type": ["string", "null"],
-                        "description": "Beginning Period of Availability - four digits.",
-                        "minLength": 4,
-                        "maxLength": 4,
-                    },
-                    "epoa": {
-                        "type": ["string", "null"],
-                        "description": "Ending Period of Availability - four digits.",
-                        "minLength": 4,
-                        "maxLength": 4,
-                    },
-                    "a": {
-                        "type": ["string", "null"],
-                        "description": "Availability Type Code - X or null.",
-                    },
-                    "main": {
-                        "type": "string",
-                        "description": "Main Account Code - four digits.",
-                        "minLength": 4,
-                        "maxLength": 4,
-                    },
-                    "sub": {
-                        "type": ["string", "null"],
-                        "description": "Sub-Account Code - three digits.",
-                        "minLength": 3,
-                        "maxLength": 3,
-                    }
-                }
-            }
-        }
+    "type": "array",
+    "items": {
+        "type": "object",
+        "required": ["aid", "main"],
+        "additionalProperties": False,
+        "properties": {
+            "ata": {
+                "type": ["string", "null"],
+                "description": "Allocation Transfer Agency Identifier.",
+                "minLength": 3,
+                "maxLength": 3,
+            },
+            "aid": {
+                "type": "string",
+                "description": "Agency Identifier.",
+                "minLength": 3,
+                "maxLength": 3,
+            },
+            "bpoa": {
+                "type": ["string", "null"],
+                "description": "Beginning Period of Availability - four digits.",
+                "pattern": "^\\d{4}$",
+            },
+            "epoa": {
+                "type": ["string", "null"],
+                "description": "Ending Period of Availability - four digits.",
+                "pattern": "^\\d{4}$",
+            },
+            "a": {
+                "type": ["string", "null"],
+                "description": "Availability Type Code - X or null.",
+                "enum": ["X", "null"],
+            },
+            "main": {
+                "type": "string",
+                "description": "Main Account Code - four digits.",
+                "pattern": "^\\d{4}$",
+            },
+            "sub": {
+                "type": ["string", "null"],
+                "description": "Sub-Account Code - three digits.",
+                "pattern": "^\\d{3}$",
+            },
+        },
+    },
+}
 
 advanced_filter_object = {
     "type": "object",
+    "additionalProperties": False,
     "properties": {
-        "keywords": { "type": "array", "items": { "type": "string" }},
-        "description": { "type": "string" },
-        "time_period": time_period_object,
-        "place_of_performance_scope": { "type": "string", "enum": [ "domestic", "foreign" ]},
-        "agencies": agency_object,
-        "recipient_search_text": {
-            "type": "array", "items": { "type": "string" },
-            "description": "Text searched across a recipient's name, UEI, and DUNS.",
-            "minItems": 1 # Will return 422 if this is below min 1 items
+        "keywords": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "For example, transport.",
         },
-        "recipient_scope": { "type": "string", "enum": ["domestic", "foreign"] },
+        "description": {"type": "string"},
+        "time_period": time_period_object,
+        "place_of_performance_scope": {"type": "string", "enum": ["domestic", "foreign"]},
+        "agencies": {"type": "array", "items": agency_object},
+        "recipient_search_text": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": (
+                "Text searched across a recipient's name, UEI, and DUNS. "
+                "For example, Hampton or Roads."
+            ),
+            "minItems": 1,  # Will return 422 if this is below min 1 items
+        },
+        "recipient_scope": {"type": "string", "enum": ["domestic", "foreign"]},
         "recipient_locations": standard_location_object,
-        "recipient_type_names": { "type": "array", "items": { "type": "string" }},
+        "recipient_type_names": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "For example, category_business or sole_proprietorship.",
+        },
         "award_type_codes": filter_object_award_types,
-        'award_ids': {
-            'type': 'array', 'items': { 'type': 'string', },
-            'description': (
-                "Award IDs surrounded by double quotes e.g \"SPE30018FLJFN\" "
+        "award_ids": {
+            "type": "array",
+            "items": {
+                "type": "string",
+            },
+            "description": (
+                'Award IDs surrounded by double quotes e.g "SPE30018FLJFN" '
                 "will perform exact matches as opposed to the default, fuzzier full text matches. "
                 "Useful for Award IDs that contain spaces or other word delimiters"
-            )
+            ),
         },
-        'award_amounts': {
-            'type': 'array',
-            'items': {
-                'type': 'object',
-                'properties': {
-                    'lower_bound': { 'type': 'number' },
-                    'upper_bound': { 'type': 'number' },
-                }
-            }
+        "award_amounts": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "lower_bound": {"type": "number"},
+                    "upper_bound": {"type": "number"},
+                },
+            },
+            "description": "For example, 1000000.",
         },
-        "program_numbers": { "type": "array", "items": { "type": "string" }},
+        "program_numbers": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "For example, 10.331.",
+        },
         "naics_codes": {
             "type": "object",
+            "additionalProperties": False,
             "properties": {
-                "require": { "type": "array", "items": { "type": "string" }},
-                "exclude": { "type": "array", "items": { "type": "string" }},
-            }
+                "require": {"type": "array", "items": {"type": "string"}},
+                "exclude": {"type": "array", "items": {"type": "string"}},
+            },
+            "description": "For example, [33] or [3333].",
         },
         "tas_codes": {
             "type": "object",
+            "additionalProperties": False,
             "properties": {
                 "require": {
                     "type": "array",
-                    "items": { "type": "array", "items": { "type": "string"} }
+                    "items": {"type": "array", "items": {"type": "string"}},
                 },
                 "exclude": {
                     "type": "array",
-                    "items": { "type": "array", "items": { "type": "string"} }
+                    "items": {"type": "array", "items": {"type": "string"}},
                 },
-            }
+            },
+            "description": "For example, [[091, 091-0800]].",
         },
         "psc_codes": {
             "type": "array",
             "items": {
                 "type": "object",
+                "additionalProperties": False,
                 "properties": {
                     "require": {
                         "type": "array",
-                        "items": { "type": "array", "items": { "type": "string"} }
+                        "items": {"type": "array", "items": {"type": "string"}},
                     },
                     "exclude": {
                         "type": "array",
-                        "items": { "type": "array", "items": { "type": "string"} }
+                        "items": {"type": "array", "items": {"type": "string"}},
                     },
-                }
-            }
+                },
+            },
+            "description": (
+                "Supports new PSCCodeObject or legacy array of codes. "
+                "For example, [[Service, B, B5, B502]]."
+            ),
         },
-        "contract_pricing_type_codes": { "type": "array", "items": { "type": "string" }},
-        "set_aside_type_codes": { "type": "array", "items": { "type": "string" }},
-        "extent_competed_type_codes" : { "type": "array", "items": { "type": "string" }},
+        "contract_pricing_type_codes": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "For example, J.",
+        },
+        "set_aside_type_codes": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "For example, NONE.",
+        },
+        "extent_competed_type_codes": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "For example, A.",
+        },
         "treasury_account_components": treasury_account_components,
-        "program_activity": { "type": "array", "items": { "type": "string" }},
+        "program_activity": {"type": "array", "items": {"type": "string"}},
         "program_activities": {
-            "type": "object",
+            "type": "array",
             "description": (
                 "A filter option that supports filtering by a program activity name or code. "
                 "If this is used at least name or code must be provided."
             ),
-            "properties": {
-                "name": { "type": "string" },
-                "code": { "type": "string" },
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "name": {"type": "string"},
+                    "code": {"type": "string"},
+                },
+                "anyOf": [{"required": ["name"]}, {"required": ["code"]}],
             },
         },
-    }
+    },
 }

@@ -2,45 +2,42 @@ from typing import Any
 
 from mcp.types import Tool
 
-from utils.http import GetClient
+from utils.http import HttpClient
 
-tool_toptier_agencies = Tool(
-    name="toptier_agencies",
-    description=(
-        "This data can be used to better understand the different ways "
-        "that a specific agency spends money"
-    ),
-    inputSchema={
-        "type": "object",
-        "required": [],
-        "properties": {
-            "sort": {
-                "type": "string",
-                "description": "A data field used to sort the response array",
-                "enum": [
-                    "agency_id",
-                    "agency_name",
-                    "active_fy",
-                    "active_fq",
-                    "outlay_amount",
-                    "obligated_amount",
-                    "budget_authority_amount",
-                    "current_total_budget_authority_amount",
-                    "percentage_of_total_budget_authority",
-                ],
-            },
-            "order": {
-                "type": "string",
-                "description": "The direction that the sort field will be sorted in",
-                "enum": ["asc", "desc"],
-            },
+input_schema = {
+    "type": "object",
+    "required": [],
+    "additionalProperties": False,
+    "properties": {
+        "sort": {
+            "type": "string",
+            "description": "A data field used to sort the response array",
+            "enum": [
+                "agency_id",
+                "agency_name",
+                "active_fy",
+                "active_fq",
+                "outlay_amount",
+                "obligated_amount",
+                "budget_authority_amount",
+                "current_total_budget_authority_amount",
+                "percentage_of_total_budget_authority",
+            ],
+            "default": "percentage_of_total_budget_authority",
+        },
+        "order": {
+            "type": "string",
+            "description": "The direction that the sort field will be sorted in",
+            "enum": ["asc", "desc"],
+            "default": "desc",
         },
     },
-)
+}
 
-response_schema = {
+output_schema = {
     "type": "object",
     "required": ["results"],
+    "additionalProperties": False,
     "properties": {
         "results": {
             "type": "array",
@@ -61,6 +58,7 @@ response_schema = {
                     "toptier_code",
                     "agency_slug",
                 ],
+                "additionalProperties": False,
                 "properties": {
                     "abbreviation": {"type": "string"},
                     "active_fq": {"type": "string"},
@@ -99,6 +97,16 @@ response_schema = {
     },
 }
 
+tool_toptier_agencies = Tool(
+    name="toptier_agencies",
+    description=(
+        "This data can be used to better understand the different ways "
+        "that a specific agency spends money"
+    ),
+    inputSchema=input_schema,
+    title="Toptier Agency Profile",
+)
+
 
 async def call_tool_toptier_agencies(arguments: dict[str, Any]):
     sort = arguments.get("sort")
@@ -109,6 +117,8 @@ async def call_tool_toptier_agencies(arguments: dict[str, Any]):
     if order is not None:
         params["order"] = order
 
-    endpoint = "/api/v2/references/toptier_agencies/"
-    get_client = GetClient(endpoint, params, response_schema)
+    endpoint = "/api/v2/references/toptier_agencies/?"
+    get_client = HttpClient(
+        endpoint=endpoint, method="GET", params=params, output_schema=output_schema
+    )
     return await get_client.send()
