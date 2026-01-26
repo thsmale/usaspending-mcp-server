@@ -54,7 +54,11 @@ filter_object_award_types = {
         "type": "string",
         "enum": object_award_types,
     },
-    "description": "List of filterable award types. For example [A, B, C, D].",
+    "description": (
+        "List of filterable award types. For example [A, B, C, D]. "
+        "Use the prompt name award_type_codes_guide for more critical information."
+    ),
+    "minItems": 1,
 }
 
 standard_location_object = {
@@ -254,6 +258,7 @@ treasury_account_components = {
 
 advanced_filter_object = {
     "type": "object",
+    "description": "Use complex query logic to find more specific data.",
     "additionalProperties": False,
     "properties": {
         "keywords": {
