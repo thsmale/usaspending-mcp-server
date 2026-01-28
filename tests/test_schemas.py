@@ -47,24 +47,34 @@ class TestTopTierAgenciesSchema:
     @patch(
         "tools.v2.references.toptier_agencies_custom.read_cached_file",
     )
-    def test_no_cache_input_schema(self, mock_read_cached_file):
+    @patch(
+        "tools.v2.references.toptier_agencies_custom.get_fresh_toptier_agencies",
+    )
+    def test_no_cache_input_schema(self, mock_get_fresh_toptier_agencies, mock_read_cached_file):
         mock_read_cached_file.return_value = [], False
+        mock_get_fresh_toptier_agencies.return_value = [], False
         importlib.reload(self.toptier_agencies_module)
         from tools.v2.references.toptier_agencies import input_schema, original_input_schema
 
         mock_read_cached_file.assert_called_once()
+        mock_get_fresh_toptier_agencies.assert_called_once()
         Draft202012Validator.check_schema(input_schema)
         assert input_schema == original_input_schema
 
     @patch(
         "tools.v2.references.toptier_agencies_custom.read_cached_file",
     )
-    def test_no_cache_output_schema(self, mock_read_cached_file):
+    @patch(
+        "tools.v2.references.toptier_agencies_custom.get_fresh_toptier_agencies",
+    )
+    def test_no_cache_output_schema(self, mock_get_fresh_toptier_agencies, mock_read_cached_file):
         mock_read_cached_file.return_value = [], False
+        mock_get_fresh_toptier_agencies.return_value = [], False
         importlib.reload(self.toptier_agencies_module)
         from tools.v2.references.toptier_agencies import original_output_schema, output_schema
 
         mock_read_cached_file.assert_called_once()
+        mock_get_fresh_toptier_agencies.assert_called_once()
         Draft202012Validator.check_schema(output_schema)
         assert output_schema == original_output_schema
 
