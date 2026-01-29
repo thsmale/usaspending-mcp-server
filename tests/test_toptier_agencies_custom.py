@@ -211,7 +211,6 @@ class TestSortResults:
             x -= 1
 
 
-# TODO: handle when cached file is expired
 class TestReadCachedFile:
     # Safely fails if cached file not read.
     def test_invalid_filename(self):
