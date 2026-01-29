@@ -1,3 +1,4 @@
+import importlib
 from unittest.mock import patch
 
 import pytest
@@ -91,15 +92,44 @@ class TestRecipient(Validation):
 
 
 class TestTopTierAgencies(Validation):
+    import tools.v2.references.toptier_agencies as toptier_agencies_module
+
     @pytest.mark.asyncio
+    @patch(
+        "tools.v2.references.toptier_agencies_custom.read_cached_file",
+    )
+    @patch(
+        "tools.v2.references.toptier_agencies_custom.get_fresh_toptier_agencies",
+    )
     @patch(
         "utils.http.client.send",
     )
-    async def test_successful_tool_call(self, mock_send):
+    async def test_successful_tool_call_to_api(
+        self, mock_send, mock_get_fresh_toptier_agencies, mock_read_cached_file
+    ):
+        mock_read_cached_file.return_value = [], False
+        mock_get_fresh_toptier_agencies.return_value = [], False
         mock_send.return_value = Response(status_code=200, json={})
+        importlib.reload(self.toptier_agencies_module)
         res = await call_tool_toptier_agencies({})
+        mock_read_cached_file.assert_called_once()
+        mock_get_fresh_toptier_agencies.assert_called_once()
+        mock_read_cached_file.assert_called_once()
         mock_send.assert_called_once()
         self.validate_text_content(res, text="{}")
+
+    @pytest.mark.asyncio
+    @patch(
+        "tools.v2.references.toptier_agencies_custom.read_cached_file",
+    )
+    async def test_successful_tool_call_to_cached_file(self, mock_read_cached_file):
+        mock_read_cached_file.return_value = [], True
+        importlib.reload(self.toptier_agencies_module)
+        res = await call_tool_toptier_agencies({})
+        expected_text = '{"results":[],"page":1,"count":0,'
+        expected_text += '"next":null,"previous":null,"hasNext":false,"hasPrevious":false}'
+        self.validate_text_content(res, text=expected_text)
+        mock_read_cached_file.assert_called_once()
 
 
 class TestTotalBudgetaryResources(Validation):
