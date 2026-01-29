@@ -48,7 +48,7 @@ MCP_SERVER_PORT
 ## Tools
 | Name | Description | Example prompts |
 | :--- | :--- | :--- |
-| federal_accounts | This returns a list of federal accounts, their number, name, managing agency, and budgetary resources | - How many federal accounts are there? |
+| federal_accounts | Use this tool to get a better understanding of how agencies receive and spend congressional funding to carry out their programs, projects, and activities. | - Provide specifics on how the Department of Homeland Security spends money. |
 | list_budget_functions | This retrieves a list of all Budget Functions ordered by their title | - What are the budget functions? |
 | major_object_class | This data can be used to better understand the different ways that a specific agency spends money | - What are the various ways the Department of Education spends money? |
 | recipient | This can be used to visualize the government spending that pertains to a specific recipient. This returns a list of recipients, their level, DUNS, UEI, and amount. | - What are some companies that received funding from the NSA? |

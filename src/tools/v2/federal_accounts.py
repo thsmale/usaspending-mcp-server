@@ -33,7 +33,7 @@ input_schema = {
         },
         "sort": {
             "type": "object",
-            "required": [],
+            "required": ["direction", "field"],  # Not in spec, but to guide the LLM
             "additionalProperties": False,
             "properties": {
                 "direction": {
@@ -58,7 +58,7 @@ input_schema = {
         "limit": {
             "type": "number",
             "description": "The number of results to include per page.",
-            "default": 50,
+            "default": 5,
         },
         "keyword": {
             "type": "string",
@@ -136,8 +136,10 @@ output_schema = {
 tool_federal_accounts = Tool(
     name="federal_accounts",
     description=(
-        "This returns a list of federal accounts, their number, name, managing agency, "
-        "and budgetary resources"
+        "The government has more than 2,000 unique Federal Accounts, "
+        "which are similar to bank accounts. "
+        "Use this tool to get a better understanding of how agencies receive "
+        "and spend congressional funding to carry out their programs, projects, and activities."
     ),
     inputSchema=input_schema,
     title="Federal Accounts",
