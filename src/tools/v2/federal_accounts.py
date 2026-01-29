@@ -33,7 +33,7 @@ input_schema = {
         },
         "sort": {
             "type": "object",
-            "required": ["direction", "field"],  # Not in spec, but to guide the LLM
+            "required": [],
             "additionalProperties": False,
             "properties": {
                 "direction": {
@@ -150,7 +150,7 @@ async def call_tool_federal_accounts(arguments: dict[str, Any]):
     endpoint = "/api/v2/federal_accounts/"
     filters = arguments.get("filters")
     sort = arguments.get("sort")
-    limit = arguments.get("limit")
+    limit = arguments.get("limit", 5)
     page = arguments.get("page")
     keyword = arguments.get("keyword")
 
