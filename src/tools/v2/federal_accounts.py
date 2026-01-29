@@ -60,6 +60,11 @@ input_schema = {
             "description": "The number of results to include per page.",
             "default": 5,
         },
+        "page": {
+            "type": "number",
+            "description": "The page of results to return based on the limit.",
+            "default": 1,
+        },
         "keyword": {
             "type": "string",
             "description": (
