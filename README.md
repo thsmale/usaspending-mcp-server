@@ -50,7 +50,7 @@ MCP_SERVER_PORT
 | :--- | :--- | :--- |
 | federal_accounts | Use this tool to get a better understanding of how agencies receive and spend congressional funding to carry out their programs, projects, and activities. | - Provide specifics on how the Department of Homeland Security spends money. |
 | list_budget_functions | This retrieves a list of all Budget Functions ordered by their title | - What are the budget functions? |
-| major_object_class | This data can be used to better understand the different ways that a specific agency spends money | - What are the various ways the Department of Education spends money? |
+| major_object_class | This data can be used to better understand the different ways that a specific agency spends money | - How much money does the Department of Education spend on employee pay and benefits? |
 | recipient | This can be used to visualize the government spending that pertains to a specific recipient. This returns a list of recipients, their level, DUNS, UEI, and amount. | - What are some companies that received funding from the NSA? |
 | spending | This data can be used to drill down into specific subsets of data by level of detail. This data represents all government spending in the specified time period, grouped by the data type of your choice. | - What was some spending related to International Affairs? |
 | spending_by_award | This allows for complex filtering for specific subsets of spending data. This accepts filters and fields, and returns the fields of the filtered awards. | - What was the largest award in 2025? <br> - What are some companies that received major federal contracts in Lindsey Graham's district? |
