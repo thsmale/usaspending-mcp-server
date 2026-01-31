@@ -1,7 +1,7 @@
 from mcp.types import Resource
 from pydantic import FileUrl
 
-from tools.v2.references.toptier_agencies import (
+from tools.v2.references.toptier_agencies.toptier_agencies import (
     toptier_agencies,
     use_cached_file,
 )
