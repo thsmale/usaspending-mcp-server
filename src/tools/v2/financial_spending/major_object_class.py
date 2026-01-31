@@ -20,6 +20,8 @@ tool_major_object_class = Tool(
     title="Major Object Classes",
 )
 
+endpoint = "/api/v2/financial_spending/major_object_class/?"
+
 
 async def call_tool_major_object_class(arguments: dict[str, Any]):
     fiscal_year = arguments.get("fiscal_year")
@@ -50,7 +52,6 @@ async def call_tool_major_object_class(arguments: dict[str, Any]):
         "funding_agency_id": funding_agency_id,
     }
 
-    endpoint = "/api/v2/financial_spending/major_object_class/?"
     get_client = HttpClient(
         endpoint=endpoint, method="GET", params=params, output_schema=output_schema
     )

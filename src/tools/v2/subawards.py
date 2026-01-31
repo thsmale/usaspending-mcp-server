@@ -17,9 +17,10 @@ tool_subawards = Tool(
     title="Subawards",
 )
 
+endpoint = "/api/v2/subawards/"
+
 
 async def call_tool_subawards(arguments: dict[str, Any]):
-    endpoint = "/api/v2/subawards/"
     page = arguments.get("page")
     limit = arguments.get("limit")
     sort = arguments.get("sort")

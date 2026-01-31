@@ -27,9 +27,10 @@ tool_spending_by_award = Tool(
     title="Spending by Award",
 )
 
+endpoint = "/api/v2/search/spending_by_award/"
+
 
 async def call_tool_spending_by_award(arguments: dict[str, Any]):
-    endpoint = "/api/v2/search/spending_by_award/"
     filters = arguments.get("filters")
     fields = arguments.get("fields")
     limit = arguments.get("limit")

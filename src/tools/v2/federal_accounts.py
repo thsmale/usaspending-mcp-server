@@ -21,9 +21,10 @@ tool_federal_accounts = Tool(
     title="Federal Accounts",
 )
 
+endpoint = "/api/v2/federal_accounts/"
+
 
 async def call_tool_federal_accounts(arguments: dict[str, Any]):
-    endpoint = "/api/v2/federal_accounts/"
     filters = arguments.get("filters")
     sort = arguments.get("sort")
     limit = arguments.get("limit", 5)

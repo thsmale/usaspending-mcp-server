@@ -20,9 +20,10 @@ tool_spending_over_time = Tool(
     title="Spending Over Time",
 )
 
+endpoint = "/api/v2/search/spending_over_time/"
+
 
 async def call_tool_spending_over_time(arguments: dict[str, Any]):
-    endpoint = "/api/v2/search/spending_over_time/"
     group = arguments.get("group")
     filters = arguments.get("filters")
     subawards = arguments.get("subawards")

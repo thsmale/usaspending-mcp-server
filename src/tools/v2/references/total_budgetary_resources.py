@@ -19,6 +19,8 @@ tool_total_budgetary_resources = Tool(
     title="Total Government Budgetary Resources",
 )
 
+endpoint = "/api/v2/references/total_budgetary_resources/?"
+
 
 async def call_tool_total_budgetary_resources(arguments: dict[str, Any]):
     fiscal_year = arguments.get("fiscal_year")
@@ -54,7 +56,6 @@ async def call_tool_total_budgetary_resources(arguments: dict[str, Any]):
     if fiscal_period is not None:
         params["fiscal_period"] = fiscal_period
 
-    endpoint = "/api/v2/references/total_budgetary_resources/?"
     get_client = HttpClient(
         endpoint=endpoint, method="GET", params=params, output_schema=output_schema
     )

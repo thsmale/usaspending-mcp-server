@@ -57,6 +57,9 @@ tool_toptier_agencies = Tool(
 )
 
 
+endpoint = "/api/v2/references/toptier_agencies/?"
+
+
 async def call_tool_toptier_agencies(arguments: dict[str, Any]):
     # Arguments for USA Spending API schema
     sort = arguments.get("sort", "percentage_of_total_budget_authority")
@@ -67,7 +70,6 @@ async def call_tool_toptier_agencies(arguments: dict[str, Any]):
     if order is not None:
         params["order"] = order
 
-    endpoint = "/api/v2/references/toptier_agencies/?"
     get_client = HttpClient(
         endpoint=endpoint, method="GET", params=params, output_schema=output_schema
     )

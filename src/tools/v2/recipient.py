@@ -19,9 +19,10 @@ tool_recipient = Tool(
     title="Recipient",
 )
 
+endpoint = "/api/v2/recipient/"
+
 
 async def call_tool_recipient(arguments: dict[str, Any]):
-    endpoint = "/api/v2/recipient/"
     order = arguments.get("order")
     sort = arguments.get("sort")
     limit = arguments.get("limit")

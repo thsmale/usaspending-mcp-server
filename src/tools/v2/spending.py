@@ -30,9 +30,10 @@ tool_spending = Tool(
     title="Spending Explorer",
 )
 
+endpoint = "/api/v2/spending/"
+
 
 async def call_tool_spending(arguments: dict[str, Any]):
-    endpoint = "/api/v2/spending/"
     spending_type = arguments.get("type")
     filters = arguments.get("filters")
 
