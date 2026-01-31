@@ -1,7 +1,6 @@
 import json
 from collections.abc import Iterable
 from copy import deepcopy
-from datetime import date
 
 from httpx import HTTPError, Response, get
 from jsonschema import ValidationError, validate
@@ -10,6 +9,12 @@ from mcp.types import (
     INTERNAL_ERROR,
     ErrorData,
     TextContent,
+)
+
+from utils.dates import (
+    get_cur_fy_fq,
+    is_outdated_fy_fq,
+    latest_fy_fq_with_data,
 )
 
 """
@@ -163,14 +168,16 @@ def read_cached_file(filename: str):
 
 # Check to make sure the cached file is not out of date
 # All key, vals of the cached value have already been validated in the unit tests
-# Federal Gov FY is October 1 of one calendar year through September 30 of the next.
+# Expect about a 45 day delay after a fq to end for data to be updated.
+# https://github.com/fedspendingtransparency/usaspending-api/blob/master/loading_data.md
 def cached_file_is_current(toptier_agencies):
     outdated_agencies = 0
-    cur_fy, cur_fq = return_cur_fy_fq()
+    cur_fy, cur_fq = get_cur_fy_fq()
+    max_fy_with_data, max_fq_with_data = latest_fy_fq_with_data(lag=45)
     for agency in toptier_agencies:
         fy = agency.get("active_fy")
         fq = agency.get("active_fq")
-        outdated = is_outdated_fy_fq(cur_fy, cur_fq, fy, fq)
+        outdated = is_outdated_fy_fq(max_fy_with_data, max_fq_with_data, fy, fq)
         if outdated is False:
             outdated_agencies += 1
 
@@ -179,40 +186,6 @@ def cached_file_is_current(toptier_agencies):
         return False
 
     return True
-
-
-# Expect about a 45 day delay after a fq to end for data to be updated.
-# https://github.com/fedspendingtransparency/usaspending-api/blob/master/loading_data.md
-def is_outdated_fy_fq(cur_fy, cur_fq, fy, fq):
-    try:
-        fy = int(fy)
-        fq = int(fq)
-        if fy == cur_fy and fq == cur_fq:
-            return True
-    except TypeError as e:
-        print(f"Unable to cast fy {fy} or {fq} to int {e=}")
-    except Exception as e:
-        print(f"Unexpected error occurred in current_fy_fq {e=} and {type(e)=}")
-
-    return False
-
-
-def return_cur_fy_fq():
-    today = date.today()
-    cur_month = today.month
-    cur_year = today.year
-    cur_fy = cur_year
-    cur_fq = 0
-    if cur_month >= 10 and cur_month <= 12:
-        cur_fy += 1
-        cur_fq = 1
-    if cur_month >= 1 and cur_month <= 3:
-        cur_fq = 2
-    if cur_month >= 4 and cur_month <= 6:
-        cur_fq = 3
-    if cur_month >= 7 and cur_month <= 9:
-        cur_fq = 4
-    return cur_fy, cur_fq
 
 
 # This will fetch a new version of toptier_agencies from the API endpoint
