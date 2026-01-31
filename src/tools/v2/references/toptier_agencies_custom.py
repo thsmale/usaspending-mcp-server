@@ -23,43 +23,6 @@ I have added custom logic so the LLM can get more specific results.
 This uses a cached file, so make sure every quarter or so it is updated.
 """
 
-# Not from the official API schema, adding this so the LLM can get more specific results.
-custom_filters_input_schema = {
-    "keyword": {
-        "type": "string",
-        "description": (
-            "Search by agency name or abbreviation i.e DOT or Department of Transportation"
-        ),
-    },
-    "limit": {
-        "type": "number",
-        "description": "The number of results to include",
-        "default": 5,
-        "minimum": 1,
-        "maximum": 10,
-    },
-    "page": {
-        "type": "number",
-        "description": "The page of results to return based on the limit",
-        "minimum": 1,
-        "default": 1,
-    },
-}
-
-# Not from the official API schema, adding pagination so the LLM can get more specific results.
-custom_pagination_output_schema = {
-    "previous": {"type": ["number", "null"]},
-    "count": {
-        "type": "number",
-        "description": "The total number of results",
-    },
-    "limit": {"type": "number"},
-    "hasNext": {"type": "boolean"},
-    "page": {"type": "number"},
-    "hasPrevious": {"type": "boolean"},
-    "next": {"type": ["number", "null"]},
-}
-
 
 # Take the toptier_agencies and return in an MCP format
 def create_mcp_response(paginated_results, page_metadata, get_client):
