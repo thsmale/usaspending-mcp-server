@@ -60,12 +60,11 @@ MCP_SERVER_PORT
 | toptier_agencies | This data can be used to better understand the different ways that a specific agency spends money | - Which federal agency receives the most money? |
 
 ### tools directory explained
-This is a big API with a lot of routes so all tools are organized in the tools directory.
+As each tool is basically a wrapper for an API route, each tool is mapped similarly to the directory structure in the api_contracts directory of the usaspending-api.
+However, for tools federal_accounts, recipient, spending, and subawards their API mapping are the contracts mentioned in the root directory api_contracts/v2.
 There is a md file for each tool so it is convenient to reference the documentation used to create the tool.
+These contracts are rarely updated in the usaspending-api, but checks should still be performed to ensure they are up to date.
 Currently, all contracts (aka API documentation) are referenced from commit [dv551d0](https://github.com/fedspendingtransparency/usaspending-api/commit/db551d0ab224cfde5a22a99cada44b7746c689b1) of the usaspending-api.
-At the moment, each tool is manually created using the contract documentation as a reference.
-The current plan is to make all API routes available to this MCP server.
-In the future, the process of copying a contract over and using it to create a new tool will be automated.
 
 ## Testing
 [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector) is a good way to test the input and output schema without connecting to a LLM.

@@ -93,14 +93,14 @@ class TestRecipient(Validation):
 
 
 class TestTopTierAgencies(Validation):
-    import tools.v2.references.toptier_agencies as toptier_agencies_module
+    import tools.v2.references.toptier_agencies.toptier_agencies as toptier_agencies_module
 
     @pytest.mark.asyncio
     @patch(
-        "tools.v2.references.toptier_agencies_custom.read_cached_file",
+        "tools.v2.references.toptier_agencies.toptier_agencies_custom.read_cached_file",
     )
     @patch(
-        "tools.v2.references.toptier_agencies_custom.get_fresh_toptier_agencies",
+        "tools.v2.references.toptier_agencies.toptier_agencies_custom.get_fresh_toptier_agencies",
     )
     @patch(
         "utils.http.client.send",
@@ -121,7 +121,7 @@ class TestTopTierAgencies(Validation):
 
     @pytest.mark.asyncio
     @patch(
-        "tools.v2.references.toptier_agencies_custom.read_cached_file",
+        "tools.v2.references.toptier_agencies.toptier_agencies_custom.read_cached_file",
     )
     async def test_successful_tool_call_to_cached_file(self, mock_read_cached_file):
         mock_read_cached_file.return_value = [], True
