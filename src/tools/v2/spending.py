@@ -1,14 +1,21 @@
 from datetime import date
+from sys import maxsize as MAX_INT
 from typing import Any
 
 from mcp.shared.exceptions import McpError
 from mcp.types import INVALID_PARAMS, ErrorData, Tool
 
+from utils.dates import (
+    is_outdated_fy_fq,
+    latest_fy_fq_with_data,
+    period_to_quarter,
+)
 from utils.http import HttpClient
 
 input_schema = {
     "type": "object",
-    "required": ["type", "filters"],
+    # Filters is required, omitting bc LLM struggled setting FY & FQ/Period
+    "required": ["type"],
     "additionalProperties": False,
     "properties": {
         "type": {
@@ -26,10 +33,9 @@ input_schema = {
         },
         "filters": {
             "type": "object",
-            "anyOf": [
-                {"required": ["fy", "quarter"]},
-                {"required": ["fy", "period"]},
-            ],
+            # FY and quarter or period is required
+            # However, LLM really struggles with this
+            # So set default values in tool handler
             "additionalProperties": False,
             "properties": {
                 "fy": {
@@ -126,36 +132,57 @@ async def call_tool_spending(arguments: dict[str, Any]):
             )
         )
 
+    # Data is not reported until 45 days after the quarter closes
+    # Adjust cur fq/fy to reflect most recent fy/fq that has data
+    fy, fq = latest_fy_fq_with_data(lag=45)
+    fy = str(fy)
+    fq = str(fq)
+    # FY and FQ/Period was marked as required in the schema
+    # However, the LLM messes this up frequently
+    # So changed to not required to facilitate smoother tool calls
     if not bool(filters):
-        raise McpError(
-            ErrorData(
-                code=INVALID_PARAMS,
-                message="filters must be provided.",
-            )
-        )
+        filters = {"fy": fy, "quarter": fq}
+
+    if filters.get("fy") is None:
+        filters["fy"] = fy
+
+    if filters.get("quarter") is None and filters.get("period") is None:
+        filters["quarter"] = "1"
 
     # Very obtuse code to check if the date range contains any data.
+    # Note this doesn't take into account if period and quarter provided.
+    # If LLM provided a period != 1-12 this could break.
     try:
-        if int(filters["fy"]) <= 2017 and int(filters["quarter"]) < 2:
+        fiscal_year = int(filters.get("fy", 0))
+        quarter = int(filters.get("quarter", MAX_INT))
+        period = int(filters.get("period", MAX_INT))
+        if fiscal_year <= 2017 and (quarter < 2 or period < 6):
             raise McpError(
                 ErrorData(code=INVALID_PARAMS, message="Data is not available prior to FY 2017 Q2.")
             )
+        # If period was provided instead of quarter, check the period has data
+        if quarter == MAX_INT:
+            quarter = period_to_quarter(int(period))
+        if (
+            is_outdated_fy_fq(lower_fy=fy, lower_fq=fq, upper_fy=fiscal_year, upper_fq=quarter)
+            is True
+        ):
+            raise McpError(
+                ErrorData(
+                    code=INVALID_PARAMS,
+                    message=f"Most recently available data is from FY {fy} Q{fq}.",
+                )
+            )
     except McpError as e:
         raise e
-    except KeyError:
-        # If the agent provided a period, give the API request a shot
-        # API request could still fail for example, if period is 1, and fy is 2020
-        pass
-    except ValueError as e:
+    except TypeError as e:
         # Continue in case it was just a cast error with python
-        print(
-            f"Failed to check if fy and quarter was before 2017 Q2 due to error {e=} with {type(e)}"
-        )
+        print(f"Failed to check if fy/fq is valid date range due to error {e=}")
         pass
     except Exception as e:
         # Something really funky happened, try the API request anyways
         print(
-            "Unexpected failure checking if fy and quarter was before 2017 Q2 "
+            "Unexpected failure checking if fy and quarter was valid range "
             f"due to error {e=} with {type(e)}"
         )
         pass

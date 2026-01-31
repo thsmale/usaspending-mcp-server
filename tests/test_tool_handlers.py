@@ -2,6 +2,7 @@ import importlib
 from unittest.mock import patch
 
 import pytest
+from freezegun import freeze_time
 from httpx import Response
 from mcp.shared.exceptions import McpError
 from mcp.types import INVALID_PARAMS
@@ -219,18 +220,47 @@ class TestSpending(Validation):
         assert "type must be provided" in err.value.error.message
 
     @pytest.mark.asyncio
-    async def test_no_filters_provided(self):
-        with pytest.raises(McpError) as err:
-            await call_tool_spending({"type": "test"})
-        assert err.value.error.code == INVALID_PARAMS
-        assert "filters must be provided" in err.value.error.message
-
-    @pytest.mark.asyncio
-    async def test_invalid_date_range(self):
+    async def test_invalid_date_range_less_than(self):
         with pytest.raises(McpError) as err:
             await call_tool_spending({"type": "test", "filters": {"fy": "2017", "quarter": "1"}})
         assert err.value.error.code == INVALID_PARAMS
         assert "Data is not available prior to FY 2017 Q2" in err.value.error.message
+
+    @pytest.mark.asyncio
+    async def test_invalid_date_range_less_than_period(self):
+        with pytest.raises(McpError) as err:
+            await call_tool_spending({"type": "test", "filters": {"fy": "2017", "period": "1"}})
+        assert err.value.error.code == INVALID_PARAMS
+        assert "Data is not available prior to FY 2017 Q2" in err.value.error.message
+
+    @pytest.mark.asyncio
+    @freeze_time("2026-01-30")
+    async def test_invalid_date_range_greater_than(self):
+        # Invalid date range because data is not reported til 45 days after the previous fq closes
+        with pytest.raises(McpError) as err:
+            await call_tool_spending({"type": "test", "filters": {"fy": "2026", "quarter": "1"}})
+        assert err.value.error.code == INVALID_PARAMS
+        assert "Most recently available data is from FY 2025 Q4" in err.value.error.message
+
+    @freeze_time("2026-01-30")
+    @pytest.mark.asyncio
+    async def test_invalid_date_range_greater_than_period(self):
+        # Invalid date range because data is not reported til 45 days after the previous fq closes
+        with pytest.raises(McpError) as err:
+            await call_tool_spending({"type": "test", "filters": {"fy": "2026", "period": "1"}})
+        assert err.value.error.code == INVALID_PARAMS
+        assert "Most recently available data is from FY 2025 Q4" in err.value.error.message
+
+    @pytest.mark.asyncio
+    @freeze_time("2026-01-30")
+    @patch(
+        "utils.http.client.send",
+    )
+    async def test_valid_date_range(self, mock_send):
+        mock_send.return_value = Response(status_code=200, json={})
+        res = await call_tool_spending({"type": "test", "filters": {"fq": "2025", "quarter": "4"}})
+        mock_send.assert_called_once()
+        self.validate_text_content(res, text="{}")
 
     @pytest.mark.asyncio
     @patch(
