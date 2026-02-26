@@ -30,8 +30,9 @@ tool_list_budget_functions = Tool(
     title="List Budget Functions",
 )
 
+endpoint = "/api/v2/budget_functions/list_budget_functions/"
+
 
 async def call_tool_list_budget_functions():
-    endpoint = "/api/v2/budget_functions/list_budget_functions/"
     get_client = HttpClient(endpoint=endpoint, method="GET", output_schema=output_schema)
     return await get_client.send()

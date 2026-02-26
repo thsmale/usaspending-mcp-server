@@ -48,11 +48,11 @@ MCP_SERVER_PORT
 ## Tools
 | Name | Description | Example prompts |
 | :--- | :--- | :--- |
-| federal_accounts | This returns a list of federal accounts, their number, name, managing agency, and budgetary resources | - How many federal accounts are there? |
-| list_budget_functions | This retrieves a list of all Budget Functions ordered by their title | - What are the budget functions? |
-| major_object_class | This data can be used to better understand the different ways that a specific agency spends money | - What are the various ways the Department of Education spends money? |
+| federal_accounts | Use this tool to get a better understanding of how agencies receive and spend congressional funding to carry out their programs, projects, and activities. | - Provide specifics on how the Department of Homeland Security spends money. |
+| list_budget_functions | This retrieves a list of all Budget Functions ordered by their title | - How much does the government spend on community and regional development versus international affairs? |
+| major_object_class | This data can be used to better understand the different ways that a specific agency spends money | - How much money does the Department of Education spend on employee pay and benefits? |
 | recipient | This can be used to visualize the government spending that pertains to a specific recipient. This returns a list of recipients, their level, DUNS, UEI, and amount. | - What are some companies that received funding from the NSA? |
-| spending | This data can be used to drill down into specific subsets of data by level of detail. This data represents all government spending in the specified time period, grouped by the data type of your choice. | - What was some spending related to International Affairs? |
+| spending | This data can be used to drill down into specific subsets of data by level of detail. This data represents all government spending in the specified time period, grouped by the data type of your choice. | - Provide spending by agency for General Science, Space, and Technology. |
 | spending_by_award | This allows for complex filtering for specific subsets of spending data. This accepts filters and fields, and returns the fields of the filtered awards. | - What was the largest award in 2025? <br> - What are some companies that received major federal contracts in Lindsey Graham's district? |
 | spending_over_time | This returns a list of aggregated award amounts grouped by time period in ascending order (earliest to most recent). | - How has spending changed to California over the last 5 years? |
 | subawards | This returns a filtered set of subawards | - Describe some of the subawards for CONT_AWD_FA870221C0001_9700_-NONE-_-NONE- and provide a rationale for them. |
@@ -60,12 +60,11 @@ MCP_SERVER_PORT
 | toptier_agencies | This data can be used to better understand the different ways that a specific agency spends money | - Which federal agency receives the most money? |
 
 ### tools directory explained
-This is a big API with a lot of routes so all tools are organized in the tools directory.
+As each tool is basically a wrapper for an API route, each tool is mapped similarly to the directory structure in the api_contracts directory of the usaspending-api.
+However, for tools federal_accounts, recipient, spending, and subawards their API mapping are the contracts mentioned in the root directory api_contracts/v2.
 There is a md file for each tool so it is convenient to reference the documentation used to create the tool.
+These contracts are rarely updated in the usaspending-api, but checks should still be performed to ensure they are up to date.
 Currently, all contracts (aka API documentation) are referenced from commit [dv551d0](https://github.com/fedspendingtransparency/usaspending-api/commit/db551d0ab224cfde5a22a99cada44b7746c689b1) of the usaspending-api.
-At the moment, each tool is manually created using the contract documentation as a reference.
-The current plan is to make all API routes available to this MCP server.
-In the future, the process of copying a contract over and using it to create a new tool will be automated.
 
 ## Testing
 [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector) is a good way to test the input and output schema without connecting to a LLM.

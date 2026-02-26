@@ -38,7 +38,7 @@ award_type_groups = {
 
 resource_name = "award_type_codes"
 resource_award_type_codes = Resource(
-    uri=FileUrl(f"file:///{resource_name}.txt"),
+    uri=FileUrl(f"file:///{resource_name}.json"),
     name=resource_name,
     title="award_type_codes defined and sorted by their group.",
     description=(
@@ -46,5 +46,5 @@ resource_award_type_codes = Resource(
         "This returns JSON explaining which award_type_codes belong to which group."
         "It also includes the definition for all award_type_codes values. "
     ),
-    mime_type="text/plain",
+    mime_type="application/json",
 )

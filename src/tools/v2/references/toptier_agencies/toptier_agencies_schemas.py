@@ -1,10 +1,4 @@
-from typing import Any
-
-from mcp.types import Tool
-
-from utils.http import HttpClient
-
-input_schema = {
+original_input_schema = {
     "type": "object",
     "required": [],
     "additionalProperties": False,
@@ -34,7 +28,7 @@ input_schema = {
     },
 }
 
-output_schema = {
+original_output_schema = {
     "type": "object",
     "required": ["results"],
     "additionalProperties": False,
@@ -74,6 +68,7 @@ output_schema = {
                     "agency_name": {"type": "string"},
                     "budget_authority_amount": {"type": "number"},
                     "congressional_justification_url": {"type": ["string", "null"]},
+                    "current_total_budget_authority_amount": {"type": "number"},
                     "obligated_amount": {"type": "number"},
                     "outlay_amount": {"type": "number"},
                     "percentage_of_total_budget_authority": {
@@ -97,28 +92,39 @@ output_schema = {
     },
 }
 
-tool_toptier_agencies = Tool(
-    name="toptier_agencies",
-    description=(
-        "This data can be used to better understand the different ways "
-        "that a specific agency spends money"
-    ),
-    inputSchema=input_schema,
-    title="Toptier Agency Profile",
-)
+# Not from the official API schema, adding this so the LLM can get more specific results.
+custom_filters_input_schema = {
+    "keyword": {
+        "type": "string",
+        "description": (
+            "Search by agency name or abbreviation i.e DOT or Department of Transportation"
+        ),
+    },
+    "limit": {
+        "type": "number",
+        "description": "The number of results to include",
+        "default": 5,
+        "minimum": 1,
+        "maximum": 10,
+    },
+    "page": {
+        "type": "number",
+        "description": "The page of results to return based on the limit",
+        "minimum": 1,
+        "default": 1,
+    },
+}
 
-
-async def call_tool_toptier_agencies(arguments: dict[str, Any]):
-    sort = arguments.get("sort")
-    order = arguments.get("desc")
-    params = {}
-    if sort is not None:
-        params["sort"] = sort
-    if order is not None:
-        params["order"] = order
-
-    endpoint = "/api/v2/references/toptier_agencies/?"
-    get_client = HttpClient(
-        endpoint=endpoint, method="GET", params=params, output_schema=output_schema
-    )
-    return await get_client.send()
+# Not from the official API schema, adding pagination so the LLM can get more specific results.
+custom_pagination_output_schema = {
+    "previous": {"type": ["number", "null"]},
+    "count": {
+        "type": "number",
+        "description": "The total number of results",
+    },
+    "limit": {"type": "number"},
+    "hasNext": {"type": "boolean"},
+    "page": {"type": "number"},
+    "hasPrevious": {"type": "boolean"},
+    "next": {"type": ["number", "null"]},
+}

@@ -30,7 +30,16 @@ from prompts.general_guidance import (
 from resources.award_type_codes import (
     award_type_groups,
     resource_award_type_codes,
-    resource_name,
+)
+from resources.award_type_codes import (
+    resource_name as resource_name_award_type_codes,
+)
+from resources.toptier_agencies import (
+    get_toptier_agencies,
+    resource_toptier_agencies,
+)
+from resources.toptier_agencies import (
+    resource_name as resource_name_toptier_agencies,
 )
 
 # Import tools
@@ -152,6 +161,7 @@ async def get_prompt(name: str, arguments: dict[str, str] | None = None) -> type
 async def list_resources() -> list[types.Resource]:
     return [
         resource_award_type_codes,
+        resource_toptier_agencies,
     ]
 
 
@@ -159,13 +169,22 @@ async def list_resources() -> list[types.Resource]:
 async def read_resource(uri: AnyUrl):
     if uri.path is None:
         raise ValueError(f"Invalid resource path: {uri}")
-    name = uri.path.replace(".txt", "").lstrip("/")
+    name = uri.path.replace(".json", "").lstrip("/")
 
-    if name != resource_name:
-        # Valid resources are...
-        raise ValueError(f"Unknown resource: {uri}")
+    valid_resource_names = [resource_name_award_type_codes, resource_name_toptier_agencies]
 
-    return [ReadResourceContents(content=f"{award_type_groups}", mime_type="text/plain")]
+    if name not in valid_resource_names:
+        raise ValueError(
+            f"Unknown resource: {uri}.Valid resource names are {','.join(valid_resource_names)}"
+        )
+
+    if name == resource_name_award_type_codes:
+        return [ReadResourceContents(content=f"{award_type_groups}", mime_type="application/json")]
+
+    if name == resource_name_toptier_agencies:
+        return [
+            ReadResourceContents(content=f"{get_toptier_agencies()}", mime_type="application/json")
+        ]
 
 
 # Create the session manager with true stateless mode
